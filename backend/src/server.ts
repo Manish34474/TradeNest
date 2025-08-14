@@ -8,6 +8,8 @@ import mongoose from "mongoose";
 
 // custom imports
 import connectDB from "./config/dbConn.config";
+import credentials from "./middlewares/credentials.middleware";
+import { corsOption } from "./config/corsOption.config";
 
 // dotenv configuration
 dotenv.config();
@@ -20,6 +22,10 @@ const app = express();
 
 // database connection
 connectDB();
+
+// cors options
+app.use(credentials);
+app.use(cors(corsOption));
 
 // cookie parser
 app.use(cookieParser());
@@ -35,6 +41,9 @@ app.use("/public", express.static(path.join(__dirname, "../public")));
 console.log("serving file from: ", path.join(__dirname, "../public"));
 
 //server
-app.listen(PORT, () => {
-  console.log("Server running on port number : ", PORT);
+mongoose.connection.once("open", () => {
+  console.log("Connected to Mongo DB");
+  app.listen(PORT, () => {
+    console.log("Server running on port number : ", PORT);
+  });
 });
