@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const userSchema = new mongoose.Schema(
+const tempUserSchema = new mongoose.Schema(
   {
     username: {
       type: String,
@@ -22,11 +22,13 @@ const userSchema = new mongoose.Schema(
       seller: Number,
       admin: Number,
     },
-    refreshToken: String,
-
-    // other details of the user
-    profile: {
-      type: String,
+    OTP: {
+      type: Number,
+      require: true,
+    },
+    OTPexpires: {
+      type: Date,
+      require: true,
     },
   },
   {
@@ -34,6 +36,6 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-const userModel = mongoose.model("User", userSchema);
+const tempUserModel = mongoose.model("TempUser", tempUserSchema);
 
-export default userModel;
+export default tempUserModel;
