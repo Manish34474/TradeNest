@@ -7,6 +7,7 @@ import express from "express";
 import mongoose from "mongoose";
 
 // custom imports
+import connectDB from "./config/dbConn.config";
 
 // dotenv configuration
 dotenv.config();
@@ -16,6 +17,9 @@ const PORT = process.env.PORT || 5000;
 
 //app
 const app = express();
+
+// database connection
+connectDB();
 
 // cookie parser
 app.use(cookieParser());
