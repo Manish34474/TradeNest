@@ -10,6 +10,7 @@ import mongoose from "mongoose";
 import connectDB from "./config/dbConn.config";
 import credentials from "./middlewares/credentials.middleware";
 import { corsOption } from "./config/corsOption.config";
+import usersRouter from "./routes/users.route";
 
 // dotenv configuration
 dotenv.config();
@@ -39,6 +40,9 @@ app.use(express.json({ limit: "5mb" }));
 // Serve Static Files
 app.use("/public", express.static(path.join(__dirname, "../public")));
 console.log("serving file from: ", path.join(__dirname, "../public"));
+
+// routes
+app.use("/api/v1/user", usersRouter);
 
 //server
 mongoose.connection.once("open", () => {

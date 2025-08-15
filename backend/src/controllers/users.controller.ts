@@ -158,4 +158,4 @@ async function deleteUser(req: Request, res: Response) {
   }
 }
 
-export { registerUser, verifyOTP, deleteUser };
+export { getAllUsers, registerUser, verifyOTP, deleteUser };
