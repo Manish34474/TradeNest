@@ -26,7 +26,12 @@ const userSchema = new mongoose.Schema(
 
     // other details of the user
     profile: {
-      type: String,
+      imageURL: {
+        type: String,
+      },
+      public_id: {
+        type: String,
+      },
     },
   },
   {
