@@ -5,6 +5,45 @@ import bcrypt from "bcrypt";
 import validateFields from "../helpers/validateMissingFields.helper";
 import { sendOtpMail } from "../helpers/otpMail.helper";
 
+// get all users
+async function getAllUsers(req: Request, res: Response) {
+  // page number and limit for pagination
+  const page =
+    typeof req.query.page === "string" ? parseInt(req.query.page) : 1;
+  const limit =
+    typeof req.query.limit === "string" ? parseInt(req.query.limit) : 10;
+  const skip = (page - 1) * limit;
+
+  // find users in database
+  const users = await userModel
+    .find()
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limit);
+
+  // if no users found
+  if (users.length === 0) {
+    return res.status(204).json({
+      users: [],
+      message: "No users found",
+      currentPage: page,
+      totalPages: 0,
+      totalUsers: 0,
+    });
+  }
+
+  // if users found
+  const totalUsers = await userModel.countDocuments();
+  const totalPages = Math.ceil(totalUsers / limit);
+
+  return res.status(200).json({
+    users,
+    currentPage: page,
+    totalPages: totalPages,
+    totalUsers: totalUsers,
+  });
+}
+
 // register new user
 async function registerUser(req: Request, res: Response) {
   // get username email and password from body
@@ -84,7 +123,7 @@ async function verifyOTP(req: Request, res: Response) {
     });
 
     // delete temp user
-    await tempUser.deleteOne({ email: email });
+    await tempUserModel.deleteOne({ email: email });
 
     return res
       .status(201)
@@ -96,4 +135,27 @@ async function verifyOTP(req: Request, res: Response) {
   }
 }
 
-export { registerUser, verifyOTP };
+// delete user
+async function deleteUser(req: Request, res: Response) {
+  // get email from body
+  const { email } = req.body;
+
+  try {
+    // check if the user exists
+    const existingUser = await userModel.findOne({ email: email }).exec();
+    if (!existingUser) {
+      return res.status(404).json({ error: "User does not exist" });
+    }
+
+    //delete user
+    await userModel.deleteOne({ email: email });
+
+    return res.status(201).json({ message: "User deleted successfully." });
+  } catch (error: any) {
+    return res.status(500).json({
+      message: error.message || "Oops!!! something went wrong. Try again",
+    });
+  }
+}
+
+export { registerUser, verifyOTP, deleteUser };
