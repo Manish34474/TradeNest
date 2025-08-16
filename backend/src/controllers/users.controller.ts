@@ -4,6 +4,8 @@ import tempUserModel from "../models/tempUser.model";
 import bcrypt from "bcrypt";
 import validateFields from "../helpers/validateMissingFields.helper";
 import { sendOtpMail } from "../helpers/otpMail.helper";
+import crypto from "crypto";
+import uploadToCloudinary from "../helpers/uploadToCloudinary.helper";
 
 // get all users
 async function getAllUsers(req: Request, res: Response) {
@@ -103,6 +105,10 @@ async function verifyOTP(req: Request, res: Response) {
   // get email and OTP from body
   const { email, otp } = req.body;
 
+  // validate missing fields
+  const hasError = validateFields({ email, otp }, res);
+  if (hasError) return;
+
   try {
     // find the temp user with the email
     const tempUser = await tempUserModel.findOne({ email: email }).exec();
@@ -135,10 +141,49 @@ async function verifyOTP(req: Request, res: Response) {
   }
 }
 
+// update profile picture
+async function updateProfile(req: Request, res: Response) {
+  // get email from body
+  const { email } = req.body;
+
+  // get image from files
+  if (!req.file) {
+    return res.status(400).json({ message: "Image file is required." });
+  }
+
+  // change/update profile picture
+  try {
+    const user = await userModel.findOne({ email: email }).exec();
+    if (!user) {
+      return res.status(400).json({ message: "User not found" });
+    }
+
+    // upload profile to cloudinary
+    const public_id = crypto.randomBytes(10).toString("hex");
+    const imageURL = await uploadToCloudinary(req.file.buffer, public_id);
+
+    // update picture
+    user.profile = { imageURL, public_id };
+    await user.save();
+
+    return res
+      .status(200)
+      .json({ message: "Profile picture updated successfully" });
+  } catch (error: any) {
+    return res.status(500).json({
+      message: error.message || "Oops!!! something went wrong. Try again",
+    });
+  }
+}
+
 // delete user
 async function deleteUser(req: Request, res: Response) {
   // get email from body
   const { email } = req.body;
+
+  // validate missing fields
+  const hasError = validateFields({ email }, res);
+  if (hasError) return;
 
   try {
     // check if the user exists
@@ -158,4 +203,4 @@ async function deleteUser(req: Request, res: Response) {
   }
 }
 
-export { getAllUsers, registerUser, verifyOTP, deleteUser };
+export { getAllUsers, registerUser, verifyOTP, updateProfile, deleteUser };
