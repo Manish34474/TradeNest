@@ -22,7 +22,7 @@ async function getAllCategories(req: Request, res: Response) {
     .skip(skip)
     .limit(limit);
 
-  // if no users found
+  // if no categories found
   if (categories.length === 0) {
     return res.status(204).json({
       categories: [],
@@ -33,7 +33,7 @@ async function getAllCategories(req: Request, res: Response) {
     });
   }
 
-  // if users found
+  // if categories found
   const totalCategories = await categoryModel.countDocuments();
   const totalPages = Math.ceil(totalCategories / limit);
 
@@ -179,7 +179,7 @@ async function deleteCategory(req: Request, res: Response) {
   }
 }
 
-// find one category
+// get one category
 async function getCategory(req: Request, res: Response) {
   const { slug } = req.params;
 
