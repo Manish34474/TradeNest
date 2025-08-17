@@ -8,41 +8,49 @@ import updateDocumentFields from "../helpers/updateDocumentFields.helper";
 
 // get all products
 async function getAllProducts(req: Request, res: Response) {
-  // page number and limit for pagination
-  const page =
-    typeof req.query.page === "string" ? parseInt(req.query.page) : 1;
-  const limit =
-    typeof req.query.limit === "string" ? parseInt(req.query.limit) : 10;
-  const skip = (page - 1) * limit;
+  try {
+    // pagination
+    const page =
+      typeof req.query.page === "string" ? parseInt(req.query.page) : 1;
+    const limit =
+      typeof req.query.limit === "string" ? parseInt(req.query.limit) : 10;
+    const skip = (page - 1) * limit;
 
-  // find products in database
-  const products = await productModel
-    .find()
-    .sort({ createdAt: -1 })
-    .skip(skip)
-    .limit(limit);
+    // fetch products with category and seller info
+    const products = await productModel
+      .find()
+      .populate("productCategory", "categoryName") // optional: only needed fields
+      .populate("seller", "username") // optional
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .exec();
 
-  // if no products found
-  if (products.length === 0) {
-    return res.status(204).json({
-      products: [],
-      message: "No products found",
+    // total products count
+    const totalProducts = await productModel.countDocuments();
+    const totalPages = Math.ceil(totalProducts / limit);
+
+    if (products.length === 0) {
+      return res.status(204).json({
+        products: [],
+        message: "No products found",
+        currentPage: page,
+        totalPages: totalPages,
+        totalProducts: totalProducts,
+      });
+    }
+
+    return res.status(200).json({
+      products,
       currentPage: page,
-      totalPages: 0,
-      totalUsers: 0,
+      totalPages: totalPages,
+      totalProducts: totalProducts,
+    });
+  } catch (error: any) {
+    return res.status(500).json({
+      message: error.message || "Oops!!! something went wrong. Try again",
     });
   }
-
-  // if products found
-  const totalProducts = await productModel.countDocuments();
-  const totalPages = Math.ceil(totalProducts / limit);
-
-  return res.status(200).json({
-    products,
-    currentPage: page,
-    totalPages: totalPages,
-    totalCategories: totalProducts,
-  });
 }
 
 // create product
