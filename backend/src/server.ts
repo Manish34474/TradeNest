@@ -10,7 +10,10 @@ import mongoose from "mongoose";
 import connectDB from "./config/dbConn.config";
 import credentials from "./middlewares/credentials.middleware";
 import { corsOption } from "./config/corsOption.config";
+
+// router imports
 import usersRouter from "./routes/users.route";
+import authRouter from "./routes/auth.route";
 
 // dotenv configuration
 dotenv.config();
@@ -42,6 +45,7 @@ app.use("/public", express.static(path.join(__dirname, "../public")));
 console.log("serving file from: ", path.join(__dirname, "../public"));
 
 // routes
+app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/user", usersRouter);
 
 //server
