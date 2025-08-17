@@ -43,6 +43,7 @@ async function handleLogin(req: Request, res: Response) {
         {
           userInfo: {
             username: username,
+            email: email,
             roles: roles,
           },
         },
@@ -114,6 +115,7 @@ async function handleRefresh(req: Request, res: Response) {
       {
         userInfo: {
           username: user.username,
+          email: user.email,
           roles: roles,
         },
       },
