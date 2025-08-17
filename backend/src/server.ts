@@ -14,6 +14,7 @@ import { corsOption } from "./config/corsOption.config";
 // router imports
 import usersRouter from "./routes/users.route";
 import authRouter from "./routes/auth.route";
+import categoryRouter from "./routes/category.route";
 
 // dotenv configuration
 dotenv.config();
@@ -47,6 +48,7 @@ console.log("serving file from: ", path.join(__dirname, "../public"));
 // routes
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/user", usersRouter);
+app.use("/api/v1/category", categoryRouter);
 
 //server
 mongoose.connection.once("open", () => {
