@@ -42,6 +42,21 @@ const productSchema = new mongoose.Schema(
       type: [String],
       require: true,
     },
+    price: {
+      type: Number,
+      require: true,
+    },
+    discount: {
+      type: Number,
+    },
+    actualPrice: {
+      type: Number,
+    },
+    stock: {
+      type: Number,
+      require: true,
+      default: 1,
+    },
   },
   {
     timestamps: true,

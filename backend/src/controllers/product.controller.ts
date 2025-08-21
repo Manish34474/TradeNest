@@ -63,17 +63,44 @@ async function createProduct(req: Request, res: Response) {
     productCategory,
     seller,
     specifications,
+    price,
+    discount,
+    stock,
   } = req.body;
 
   // validate missing fields
   const hasError = validateFields(
-    { productName, alt, description, productCategory, seller, specifications },
+    {
+      productName,
+      alt,
+      description,
+      productCategory,
+      seller,
+      specifications,
+      price,
+      stock,
+    },
     res
   );
   if (hasError) return;
 
+  if (stock <= 0) {
+    return res
+      .status(400)
+      .json({ message: "Stock cannot be less than or equal to 0" });
+  }
+
   // normalize slug
   const normalizedSlug = productName.trim().toLowerCase().replace(/\s+/g, "-");
+
+  // calculate actual price if discount available
+  let actualPrice;
+
+  if (discount) {
+    actualPrice = Math.floor(price - (discount / 100) * price);
+  } else {
+    actualPrice = price;
+  }
 
   try {
     // check duplicate product
@@ -123,6 +150,10 @@ async function createProduct(req: Request, res: Response) {
       seller,
       description,
       specifications: parsedSpecs, // array of strings
+      price,
+      discount,
+      actualPrice,
+      stock,
     });
 
     return res
@@ -145,6 +176,9 @@ async function updateProduct(req: Request, res: Response) {
     productCategory,
     seller,
     specifications,
+    price,
+    discount,
+    stock,
   } = req.body;
 
   // validate missing fields
@@ -211,6 +245,15 @@ async function updateProduct(req: Request, res: Response) {
       }
     }
 
+    // calculate actual price if discount available
+    let actualPrice;
+
+    if (discount) {
+      actualPrice = Math.floor(price - (discount / 100) * price);
+    } else {
+      actualPrice = price;
+    }
+
     // update other fields
     updateDocumentFields(product, {
       alt,
@@ -218,6 +261,10 @@ async function updateProduct(req: Request, res: Response) {
       description,
       productCategory,
       seller,
+      discount,
+      price,
+      actualPrice,
+      stock,
     });
 
     await product.save();
