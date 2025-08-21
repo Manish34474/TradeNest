@@ -42,12 +42,13 @@ async function handleLogin(req: Request, res: Response) {
       const accessToken = jwt.sign(
         {
           userInfo: {
+            userId: id,
             email: email,
             roles: roles,
           },
         },
         accessSecret,
-        { expiresIn: "5m" }
+        { expiresIn: "30m" }
       );
 
       // creating and saving refresh token in database
@@ -113,12 +114,13 @@ async function handleRefresh(req: Request, res: Response) {
     const accessToken = jwt.sign(
       {
         userInfo: {
+          userId: user._id,
           email: user.email,
           roles: roles,
         },
       },
       accessSecret,
-      { expiresIn: "5m" }
+      { expiresIn: "30m" }
     );
 
     res.status(200).json({

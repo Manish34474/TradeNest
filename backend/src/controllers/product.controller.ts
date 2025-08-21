@@ -94,13 +94,8 @@ async function createProduct(req: Request, res: Response) {
   const normalizedSlug = productName.trim().toLowerCase().replace(/\s+/g, "-");
 
   // calculate actual price if discount available
-  let actualPrice;
-
-  if (discount) {
-    actualPrice = Math.floor(price - (discount / 100) * price);
-  } else {
-    actualPrice = price;
-  }
+  const effectiveDiscount = discount !== undefined ? discount : 0;
+  const actualPrice = Math.floor(price - (effectiveDiscount / 100) * price);
 
   try {
     // check duplicate product
@@ -151,7 +146,7 @@ async function createProduct(req: Request, res: Response) {
       description,
       specifications: parsedSpecs, // array of strings
       price,
-      discount,
+      discount: effectiveDiscount,
       actualPrice,
       stock,
     });
@@ -245,15 +240,6 @@ async function updateProduct(req: Request, res: Response) {
       }
     }
 
-    // calculate actual price if discount available
-    let actualPrice;
-
-    if (discount) {
-      actualPrice = Math.floor(price - (discount / 100) * price);
-    } else {
-      actualPrice = price;
-    }
-
     // update other fields
     updateDocumentFields(product, {
       alt,
@@ -263,9 +249,19 @@ async function updateProduct(req: Request, res: Response) {
       seller,
       discount,
       price,
-      actualPrice,
       stock,
     });
+
+    // calculate actual price if discount or price is updated
+    if (price !== undefined || discount !== undefined) {
+      const effectivePrice = price !== undefined ? price : product.price;
+      const effectiveDiscount =
+        discount !== undefined ? discount : product.discount;
+
+      product.actualPrice = Math.floor(
+        effectivePrice - (effectiveDiscount / 100) * effectivePrice
+      );
+    }
 
     await product.save();
 

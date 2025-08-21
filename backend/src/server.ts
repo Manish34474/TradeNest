@@ -16,6 +16,7 @@ import usersRouter from "./routes/users.route";
 import authRouter from "./routes/auth.route";
 import categoryRouter from "./routes/category.route";
 import productRouter from "./routes/product.route";
+import cartRouter from "./routes/cart.route";
 
 // dotenv configuration
 dotenv.config();
@@ -51,6 +52,7 @@ app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/user", usersRouter);
 app.use("/api/v1/category", categoryRouter);
 app.use("/api/v1/product", productRouter);
+app.use("/api/v1/cart", cartRouter);
 
 //server
 mongoose.connection.once("open", () => {

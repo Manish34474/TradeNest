@@ -1,26 +1,25 @@
 import { Response, Request } from "express";
 import cartModel from "../models/cart.model";
 import cartItemModel from "../models/cartItem.model";
-import productModel from "../models/product.model";
 import validateFields from "../helpers/validateMissingFields.helper";
 
 // extract email from request
-function extractEmail(req: Request) {
-  if (!req.email) {
+function extractUserId(req: Request) {
+  if (!req.userId) {
     throw new Error("Email not found in request");
   }
-  return req.email;
+  return req.userId;
 }
 
 // get cart
 async function getCart(req: Request, res: Response) {
-  // get email from request
-  const email = extractEmail(req);
+  // get id from request
+  const userId = extractUserId(req);
 
   try {
     // get all cart items
-    const cart = await cartModel.findOne({ email: email }).populate({
-      path: "CartItem",
+    const cart = await cartModel.findOne({ userId }).populate({
+      path: "cartItem",
       populate: {
         path: "productId",
         select: "image productName productCategory seller",
@@ -46,21 +45,21 @@ async function getCart(req: Request, res: Response) {
 
 // add products to cart
 async function addToCart(req: Request, res: Response) {
-  // get email from request
-  const email = extractEmail(req);
+  // get id from request
+  const userId = extractUserId(req);
 
   // get product id from body
   const { productId } = req.body;
 
   // validate missing fields
-  const hasError = validateFields({ email, productId }, res);
+  const hasError = validateFields({ productId }, res);
   if (hasError) return;
 
   // add items to cart/ if already exist increate quantity
   try {
-    let cart = await cartModel.findOne({ email });
+    let cart = await cartModel.findOne({ userId });
     if (!cart) {
-      cart = new cartModel({ email, cartItem: [] });
+      cart = new cartModel({ userId, cartItem: [] });
       await cart.save();
     }
 
@@ -94,8 +93,8 @@ async function addToCart(req: Request, res: Response) {
 
 // update cart item quantity
 async function updateCart(req: Request, res: Response) {
-  // get email from request
-  const email = extractEmail(req);
+  // get id from request
+  const userId = extractUserId(req);
 
   // get product id and update quantity from body
   const { productId, quantity } = req.body;
@@ -112,7 +111,7 @@ async function updateCart(req: Request, res: Response) {
   }
 
   try {
-    const cart = await cartItemModel.findOne({ email });
+    const cart = await cartModel.findOne({ userId });
     if (!cart) {
       return res.status(404).json({ message: "Cart not found" });
     }
@@ -139,15 +138,15 @@ async function updateCart(req: Request, res: Response) {
 
 // remove product from cart
 async function removeFromCart(req: Request, res: Response) {
-  // get email from req
-  const email = extractEmail(req);
+  // get id from req
+  const userId = extractUserId(req);
 
   // get product id from body
   const { productId } = req.body;
 
   // remove item from cart
   try {
-    const cart = await cartModel.findOne({ email });
+    const cart = await cartModel.findOne({ userId });
     if (!cart) {
       return res.status(404).json({ message: "Item not found in cart" });
     }
@@ -174,4 +173,4 @@ async function removeFromCart(req: Request, res: Response) {
   }
 }
 
-export { getCart, addToCart, removeFromCart };
+export { getCart, addToCart, updateCart, removeFromCart };

@@ -3,6 +3,7 @@ import jwtHelper from "../helpers/jwtHelper.helper";
 
 declare module "express-serve-static-core" {
   interface Request {
+    userId?: string;
     email?: string;
     roles?: number[];
   }
@@ -34,6 +35,7 @@ async function verifyJWT(req: Request, res: Response, next: NextFunction) {
     return res.sendStatus(403);
   }
 
+  req.userId = userInfo.userId;
   req.email = userInfo.email;
   req.roles = userInfo.roles;
 
