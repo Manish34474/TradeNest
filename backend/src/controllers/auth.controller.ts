@@ -42,7 +42,6 @@ async function handleLogin(req: Request, res: Response) {
       const accessToken = jwt.sign(
         {
           userInfo: {
-            username: username,
             email: email,
             roles: roles,
           },
@@ -54,7 +53,7 @@ async function handleLogin(req: Request, res: Response) {
       // creating and saving refresh token in database
       const refreshToken = jwt.sign(
         {
-          username: username,
+          email: email,
         },
         refreshSecret,
         { expiresIn: "1d" }
@@ -105,7 +104,7 @@ async function handleRefresh(req: Request, res: Response) {
     // verify if refresh token and refresh token secret match
     const decoded = await jwtHelper(refreshToken, refreshSecret);
 
-    if (user.username !== decoded.username) {
+    if (user.email !== decoded.email) {
       return res.sendStatus(403);
     }
 
@@ -114,7 +113,6 @@ async function handleRefresh(req: Request, res: Response) {
     const accessToken = jwt.sign(
       {
         userInfo: {
-          username: user.username,
           email: user.email,
           roles: roles,
         },

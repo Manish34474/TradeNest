@@ -3,7 +3,7 @@ import jwtHelper from "../helpers/jwtHelper.helper";
 
 declare module "express-serve-static-core" {
   interface Request {
-    user?: string;
+    email?: string;
     roles?: number[];
   }
 }
@@ -30,11 +30,11 @@ async function verifyJWT(req: Request, res: Response, next: NextFunction) {
 
   const userInfo = decoded.userInfo || (decoded as any).UserInfo;
 
-  if (!userInfo?.username || !userInfo?.roles) {
+  if (!userInfo?.email || !userInfo?.roles) {
     return res.sendStatus(403);
   }
 
-  req.user = userInfo.username;
+  req.email = userInfo.email;
   req.roles = userInfo.roles;
 
   next();
