@@ -5,6 +5,7 @@ import validateFields from "../helpers/validateMissingFields.helper";
 import uploadToCloudinary from "../helpers/uploadToCloudinary.helper";
 import updateDocumentFields from "../helpers/updateDocumentFields.helper";
 import deleteFromCloudinary from "../helpers/deleteFromCloudinary";
+import productModel from "../models/product.model";
 
 // get all categories
 async function getAllCategories(req: Request, res: Response) {
@@ -158,6 +159,15 @@ async function deleteCategory(req: Request, res: Response) {
   //   validate missing fields
   const hasError = validateFields({ id }, res);
   if (hasError) return;
+
+  // check if product exists under the category
+  const product = await productModel.find({ productCategory: id });
+
+  if (product) {
+    return res.status(400).json({
+      message: "Cannot delete category. Product exist under this category",
+    });
+  }
 
   // validate if category exists
   const category = await categoryModel.findById(id).exec();
