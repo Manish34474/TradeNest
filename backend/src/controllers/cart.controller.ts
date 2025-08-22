@@ -22,7 +22,18 @@ async function getCart(req: Request, res: Response) {
       path: "cartItem",
       populate: {
         path: "productId",
-        select: "image productName productCategory seller",
+        select:
+          "image productName discount price actualPrice productCategory seller",
+        populate: [
+          {
+            path: "productCategory",
+            select: "categoryName",
+          },
+          {
+            path: "seller",
+            select: "username",
+          },
+        ],
       },
     });
 
