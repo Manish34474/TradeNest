@@ -49,18 +49,27 @@ async function getAllUsers(req: Request, res: Response) {
 // register new user
 async function registerUser(req: Request, res: Response) {
   // get username email and password from body
-  const { username, email, password } = req.body;
+  const { username, email, pass, userType } = req.body;
 
   // validate email
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const passwordRegex =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
   if (!emailRegex.test(email)) {
     return res.status(400).json({
-      error: "Invalid email format. Please enter a valid email",
+      message: "Invalid email format. Please enter a valid email",
+    });
+  }
+  if (!passwordRegex.test(pass)) {
+    return res.status(400).json({
+      message:
+        "Password must have at least 8 letters and should contain (Capital letter, Small letter, Number, Special Character)",
     });
   }
 
   // validate missing fields
-  const hasError = validateFields({ username, email, password }, res);
+  const hasError = validateFields({ username, email, pass, userType }, res);
   if (hasError) return;
 
   // checking for duplicate entries
@@ -73,8 +82,11 @@ async function registerUser(req: Request, res: Response) {
 
   // create new temp user
   try {
+    // delete if existing temp user
+    await tempUserModel.findOneAndDelete({ email: email }).exec();
+
     // hashing password
-    const encryptedPass = await bcrypt.hash(password, 10);
+    const encryptedPass = await bcrypt.hash(pass, 10);
 
     // Generate OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
@@ -86,6 +98,7 @@ async function registerUser(req: Request, res: Response) {
       password: encryptedPass,
       OTP: otp,
       OTPexpires: new Date(Date.now() + 5 * 60 * 1000),
+      userType,
     });
 
     // send OTP
@@ -116,9 +129,16 @@ async function verifyOTP(req: Request, res: Response) {
       return res.status(404).json({ error: "Invalid OTP" });
     }
 
+    const Otp = parseInt(otp);
+
     // validate OTP
-    if (tempUser.OTP !== otp || tempUser.OTPexpires.getTime() < Date.now()) {
-      return res.status(404).json({ error: "Invalid OTP" });
+    if (tempUser.OTP !== Otp || tempUser.OTPexpires.getTime() < Date.now()) {
+      return res.status(400).json({ error: "Invalid OTP" });
+    }
+
+    let roles: any = { user: 848 };
+    if (tempUser.userType === "seller") {
+      roles.seller = 747;
     }
 
     // create new user of valid OTP
@@ -126,6 +146,7 @@ async function verifyOTP(req: Request, res: Response) {
       username: tempUser.username,
       email: tempUser.email,
       password: tempUser.password,
+      roles,
     });
 
     // delete temp user

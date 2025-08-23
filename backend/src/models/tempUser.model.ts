@@ -31,6 +31,9 @@ const tempUserSchema = new mongoose.Schema(
       default: new Date(Date.now() + 5 * 60 * 1000),
       require: true,
     },
+    userType: {
+      type: String,
+    },
   },
   {
     timestamps: true,
