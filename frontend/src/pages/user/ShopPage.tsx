@@ -2,201 +2,106 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Slider } from "@/components/ui/slider";
-import { Star, ChevronDown, ShoppingCart } from "lucide-react";
-import { useState } from "react";
+import { Star, ShoppingCart } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
+import axios from "@/api/axios";
+import { toast } from "sonner";
+import { isAxiosError } from "axios";
+import { Loading } from "@/components/user/Loading";
+import { Link } from "react-router-dom";
+
+interface Product {
+  _id: string;
+  image: {
+    imageURL: string;
+    public_id: string;
+  };
+  alt: string;
+  productName: string;
+  slug: string;
+  productCategory: {
+    _id: string;
+    categoryName: string;
+  };
+  seller: {
+    _id: string;
+    username: string;
+  };
+  description: string;
+  specifications: string[];
+  price: number;
+  discount: number;
+  actualPrice: number;
+  stock: number;
+}
 
 export default function ShopPage() {
-  const [itemsPerPage, setItemsPerPage] = useState(12);
   const [priceRange, setPriceRange] = useState([0, 1000]);
 
-  const allProducts = [
-    // Deals Products
-    {
-      id: 1,
-      name: "Wireless Bluetooth Headphones",
-      originalPrice: 199.99,
-      salePrice: 79.99,
-      discount: 60,
-      image: "/wireless-headphones.png",
-      rating: 4.5,
-      reviews: 1250,
-      category: "Electronics",
-      isOnSale: true,
-    },
-    {
-      id: 2,
-      name: "Smart Fitness Watch",
-      originalPrice: 299.99,
-      salePrice: 149.99,
-      discount: 50,
-      image: "/smartwatch-lifestyle.png",
-      rating: 4.3,
-      reviews: 890,
-      category: "Electronics",
-      isOnSale: true,
-    },
-    {
-      id: 3,
-      name: "Premium Coffee Maker",
-      originalPrice: 249.99,
-      salePrice: 124.99,
-      discount: 50,
-      image: "/modern-coffee-maker.png",
-      rating: 4.7,
-      reviews: 567,
-      category: "Home & Garden",
-      isOnSale: true,
-    },
-    {
-      id: 4,
-      name: "Gaming Mechanical Keyboard",
-      originalPrice: 159.99,
-      salePrice: 79.99,
-      discount: 50,
-      image: "/gaming-keyboard.png",
-      rating: 4.6,
-      reviews: 2100,
-      category: "Electronics",
-      isOnSale: true,
-    },
-    {
-      id: 5,
-      name: "4K Webcam",
-      originalPrice: 129.99,
-      salePrice: 64.99,
-      discount: 50,
-      image: "/4k-webcam.png",
-      rating: 4.4,
-      reviews: 780,
-      category: "Electronics",
-      isOnSale: true,
-    },
-    {
-      id: 6,
-      name: "Portable Power Bank",
-      originalPrice: 79.99,
-      salePrice: 39.99,
-      discount: 50,
-      image: "/portable-power-bank.png",
-      rating: 4.2,
-      reviews: 1450,
-      category: "Electronics",
-      isOnSale: true,
-    },
-    {
-      id: 7,
-      name: "Wireless Charging Pad",
-      originalPrice: 49.99,
-      salePrice: 24.99,
-      discount: 50,
-      image: "/wireless-charger.png",
-      rating: 4.1,
-      reviews: 920,
-      category: "Electronics",
-      isOnSale: true,
-    },
-    {
-      id: 8,
-      name: "Bluetooth Speaker",
-      originalPrice: 89.99,
-      salePrice: 44.99,
-      discount: 50,
-      image: "/bluetooth-speaker.png",
-      rating: 4.5,
-      reviews: 1680,
-      category: "Electronics",
-      isOnSale: true,
-    },
-    // Top Rated Products
-    {
-      id: 9,
-      name: "Premium Laptop Stand",
-      price: 89.99,
-      image: "/laptop-stand.png",
-      rating: 4.9,
-      reviews: 3200,
-      category: "Electronics",
-      isTopRated: true,
-    },
-    {
-      id: 10,
-      name: "Ergonomic Office Chair",
-      price: 299.99,
-      image: "/ergonomic-office-chair.png",
-      rating: 4.8,
-      reviews: 2850,
-      category: "Home & Garden",
-      isTopRated: true,
-    },
-    {
-      id: 11,
-      name: "Professional Camera Lens",
-      price: 599.99,
-      image: "/camera-lens.png",
-      rating: 4.9,
-      reviews: 1950,
-      category: "Electronics",
-      isTopRated: true,
-    },
-    {
-      id: 12,
-      name: "Smart Home Hub",
-      price: 149.99,
-      image: "/smart-home-hub.png",
-      rating: 4.8,
-      reviews: 2400,
-      category: "Electronics",
-      isTopRated: true,
-    },
-    {
-      id: 13,
-      name: "Organic Skincare Set",
-      price: 79.99,
-      image: "/skincare-products-display.png",
-      rating: 4.9,
-      reviews: 1750,
-      category: "Fashion",
-      isTopRated: true,
-    },
-    // Additional Products
-    {
-      id: 14,
-      name: "Running Shoes",
-      price: 129.99,
-      image: "/running-shoes-on-track.png",
-      rating: 4.4,
-      reviews: 890,
-      category: "Sports",
-    },
-    {
-      id: 15,
-      name: "Cookbook Collection",
-      price: 39.99,
-      image: "/cookbook-collection.png",
-      rating: 4.6,
-      reviews: 450,
-      category: "Books",
-    },
-    {
-      id: 16,
-      name: "Car Phone Mount",
-      price: 24.99,
-      image: "/placeholder-45rwf.png",
-      rating: 4.3,
-      reviews: 1200,
-      category: "Automotive",
-    },
-  ];
+  const [products, setProducts] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  const [totalProducts, setTotalProducts] = useState<number>(0);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [totalPages, setTotalPages] = useState<number>(1);
+  const [limit, setLimit] = useState<number>(12);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    setIsLoading(true);
+
+    const getProducts = async () => {
+      try {
+        const response = await axios.get(
+          `/product/all?page=${currentPage}&limit=${limit}`,
+          {
+            signal: controller.signal,
+          }
+        );
+        console.log(response.data);
+
+        setTotalPages(response.data.totalPages);
+        setCurrentPage(response.data.currentPage);
+        setTotalProducts(response.data.totalProducts);
+
+        setProducts(response.data.products);
+      } catch (error) {
+        if (isAxiosError(error)) {
+          if (error.code === "ERR_CANCELED") {
+            return;
+          } else if (!error.response) {
+            toast.error("No Server Response");
+          } else if (error.response.status === 401) {
+            toast.error("Unauthorized");
+          } else {
+            toast.error(error.message);
+          }
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    getProducts();
+
+    return () => {
+      controller.abort();
+    };
+  }, [currentPage, limit]);
 
   return (
     <div className="min-h-screen bg-background">
       <div className="bg-muted/20 py-3 border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center text-sm text-muted-foreground">
-            <span className="hover:text-primary cursor-pointer">Home</span>
+            <Link to={"/home"} className="hover:text-primary cursor-pointer">
+              Home
+            </Link>
             <span className="mx-2">/</span>
-            <span className="text-primary font-medium">All Products</span>
+            <Link to={"/shop"} className="text-primary font-medium">
+              Shop
+            </Link>
           </div>
         </div>
       </div>
@@ -204,7 +109,6 @@ export default function ShopPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex gap-8">
           <div className="w-64 flex-shrink-0">
-            {/* Category Filter */}
             {/* Category Filter */}
             <div className="mb-8">
               <h3 className="font-semibold text-primary mb-4">
@@ -304,14 +208,6 @@ export default function ShopPage() {
                 </Button>
               </div>
             </div>
-
-            {/* Color Filter */}
-            <div className="mb-8">
-              <button className="flex items-center justify-between w-full text-left">
-                <h3 className="font-semibold text-primary">Color</h3>
-                <ChevronDown className="h-4 w-4" />
-              </button>
-            </div>
           </div>
 
           {/* Main Content */}
@@ -322,24 +218,24 @@ export default function ShopPage() {
                   All Products
                 </h1>
                 <p className="text-sm text-muted-foreground">
-                  Showing 1-{Math.min(itemsPerPage, allProducts.length)} of{" "}
-                  {allProducts.length} results
+                  Showing 1-{Math.min(limit, totalProducts)} of {totalProducts}{" "}
+                  results
                 </p>
               </div>
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2">
                   <span className="text-sm text-muted-foreground">Show:</span>
                   <Button
-                    variant={itemsPerPage === 12 ? "default" : "outline"}
+                    variant={limit === 12 ? "default" : "outline"}
                     size="sm"
-                    onClick={() => setItemsPerPage(12)}
+                    onClick={() => setLimit(12)}
                   >
                     12
                   </Button>
                   <Button
-                    variant={itemsPerPage === 24 ? "default" : "outline"}
+                    variant={limit === 24 ? "default" : "outline"}
                     size="sm"
-                    onClick={() => setItemsPerPage(24)}
+                    onClick={() => setLimit(24)}
                   >
                     24
                   </Button>
@@ -348,81 +244,113 @@ export default function ShopPage() {
             </div>
 
             <div className="grid sm:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-              {allProducts.slice(0, itemsPerPage).map((product) => (
-                <Card
-                  key={product.id}
-                  className="group hover:shadow-lg transition-all duration-300 cursor-pointer"
-                >
-                  <CardContent className="p-0">
-                    <div className="relative overflow-hidden rounded-t-lg">
-                      <img
-                        src={product.image || "/placeholder.svg"}
-                        alt={product.name}
-                        className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-                      {product.isOnSale && (
+              {isLoading ? (
+                <Loading size="lg" className="col-span-full" />
+              ) : products.length === 0 ? (
+                <h3 className="text-xl font-semibold text-primary group-hover:text-primary/80 transition-colors duration-300">
+                  No Categories Found
+                </h3>
+              ) : (
+                products.map((product, index) => (
+                  <Card
+                    key={index}
+                    className="group hover:shadow-lg transition-all duration-300 cursor-pointer"
+                  >
+                    <CardContent className="p-0">
+                      <div className="relative overflow-hidden rounded-t-lg">
+                        <img
+                          src={product.image.imageURL || "/placeholder.svg"}
+                          alt={product.alt}
+                          className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+
                         <Badge className="absolute top-2 left-2 bg-primary text-white">
                           -{product.discount}%
                         </Badge>
-                      )}
-                      {product.isTopRated && (
-                        <Badge className="absolute top-2 left-2 bg-primary text-white">
-                          HOT
-                        </Badge>
-                      )}
-                    </div>
-                    <div className="p-4">
-                      <h3 className="font-semibold text-primary mb-2 line-clamp-2">
-                        {product.name}
-                      </h3>
-                      <div className="flex items-center gap-1 mb-2">
-                        <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                        <span className="text-sm font-medium text-primary">
-                          {product.rating}
-                        </span>
-                        <span className="text-sm text-muted-foreground">
-                          ({product.reviews})
-                        </span>
                       </div>
-                      <div className="mb-2">
-                        {product.isOnSale ? (
-                          <span className="text-muted-foreground text-sm">
-                            ✓ In stock
+                      <div className="p-4">
+                        <h3 className="font-semibold text-primary mb-2 line-clamp-2">
+                          {product.productName}
+                        </h3>
+                        <h2 className="text-muted-foreground mb-2 line-clamp-2">
+                          {product.productCategory.categoryName}
+                        </h2>
+                        <div className="flex items-center gap-1 mb-2">
+                          <span className="text-sm font-medium text-primary">
+                            Seller
                           </span>
-                        ) : (
-                          <span className="text-muted-foreground text-sm">
-                            ✓ In stock
+                          <span className="text-sm text-muted-foreground">
+                            ({product.seller.username})
                           </span>
-                        )}
+                        </div>
+                        <div className="flex items-center gap-1 mb-2">
+                          <Star className="h-4 w-4 fill-primary text-primary" />
+                          <span className="text-sm font-medium text-primary">
+                            4.5
+                          </span>
+                          <span className="text-sm text-muted-foreground">
+                            (433)
+                          </span>
+                        </div>
+                        <div className="mb-2">
+                          {product.stock > 0 ? (
+                            <span className="text-muted-foreground text-sm">
+                              ✔ In stock
+                            </span>
+                          ) : (
+                            <span className="text-muted-foreground text-sm">
+                              ✘ In stock
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-2 mb-3">
+                          <span className="text-lg font-bold text-primary">
+                            ${product.actualPrice}
+                          </span>
+                          <span className="text-sm text-muted-foreground line-through">
+                            ${product.price}
+                          </span>
+                        </div>
+                        <Button className="w-full" size="sm">
+                          <ShoppingCart className="h-4 w-4 mr-2" />
+                          Add to Cart
+                        </Button>
                       </div>
-                      <div className="flex items-center gap-2 mb-3">
-                        <span className="text-lg font-bold text-primary">
-                          ${product.salePrice}
-                        </span>
-                        <span className="text-sm text-muted-foreground line-through">
-                          ${product.originalPrice}
-                        </span>
-                      </div>
-                      <Button className="w-full" size="sm">
-                        <ShoppingCart className="h-4 w-4 mr-2" />
-                        Add to Cart
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+                    </CardContent>
+                  </Card>
+                ))
+              )}
             </div>
 
             {/* Pagination */}
             <div className="flex justify-center mt-12">
               <div className="flex gap-2">
-                <Button variant="outline" disabled>
+                <Button
+                  variant="outline"
+                  disabled={currentPage === 1 ? true : false}
+                  onClick={() => setCurrentPage(currentPage - 1)}
+                >
                   Previous
                 </Button>
-                <Button variant="default">1</Button>
-                <Button variant="outline">2</Button>
-                <Button variant="outline">3</Button>
-                <Button variant="outline">Next</Button>
+                {Array.from({ length: totalPages }, (_, index) => {
+                  const page = index + 1;
+                  return (
+                    <Button
+                      variant={currentPage === page ? "default" : "outline"}
+                      key={index}
+                      onClick={() => setCurrentPage(page)}
+                    >
+                      {page}
+                    </Button>
+                  );
+                })}
+                <Button
+                  variant="outline"
+                  disabled={currentPage === totalPages ? true : false}
+                  onClick={() => setCurrentPage(currentPage + 1)}
+                >
+                  Next
+                </Button>
               </div>
             </div>
           </div>

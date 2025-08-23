@@ -91,7 +91,7 @@ export default function HomePage() {
           signal: controller.signal,
         });
 
-        setDeals(response.data.products);
+        setTopRated(response.data.products);
       } catch (error: any) {
         console.log(error);
         toast.error("Failed to fetch products");
@@ -332,7 +332,7 @@ export default function HomePage() {
               <h3 className="text-xl font-semibold text-primary group-hover:text-primary/80 transition-colors duration-300">
                 Loading...
               </h3>
-            ) : deals.length === 0 ? (
+            ) : topRated.length === 0 ? (
               <h3 className="text-xl font-semibold text-primary group-hover:text-primary/80 transition-colors duration-300">
                 No Categories Found
               </h3>
