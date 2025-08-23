@@ -1,3 +1,4 @@
+import axios from "@/api/axios";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -5,171 +6,108 @@ import {
   ArrowRight,
   ShoppingBag,
   Smartphone,
-  Home,
-  Car,
-  Shirt,
-  Book,
   ShoppingCart,
   Star,
 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+
+interface Category {
+  _id: string;
+  image: {
+    imageURL: string;
+    public_id: string;
+  };
+  alt: string;
+  categoryName: string;
+  slug: string;
+}
+
+interface Product {
+  _id: string;
+  image: {
+    imageURL: string;
+    public_id: string;
+  };
+  alt: string;
+  productName: string;
+  slug: string;
+  productCategory: {
+    _id: string;
+    categoryName: string;
+  };
+  seller: {
+    _id: string;
+    username: string;
+  };
+  description: string;
+  specifications: string[];
+  price: number;
+  discount: number;
+  actualPrice: number;
+  stock: number;
+}
 
 export default function HomePage() {
-  const categories = [
-    {
-      name: "Electronics",
-      icon: Smartphone,
-      image: "/modern-electronics-gadgets.png",
-      description: "Latest gadgets and tech",
-    },
-    {
-      name: "Fashion",
-      icon: Shirt,
-      image: "/placeholder-zfevj.png",
-      description: "Trendy clothing & accessories",
-    },
-    {
-      name: "Home & Garden",
-      icon: Home,
-      image: "/home-decor-furniture-garden-tools.png",
-      description: "Furniture & home decor",
-    },
-    {
-      name: "Automotive",
-      icon: Car,
-      image: "/automotive-accessories.png",
-      description: "Car parts & accessories",
-    },
-    {
-      name: "Books",
-      icon: Book,
-      image: "/books-literature-education.png",
-      description: "Books & educational materials",
-    },
-    {
-      name: "Sports",
-      icon: ShoppingBag,
-      image: "/assorted-fitness-gear.png",
-      description: "Sports & fitness equipment",
-    },
-  ];
+  // get categories
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [deals, setDeals] = useState<Product[]>([]);
+  const [topRated, setTopRated] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const dealsProducts = [
-    {
-      id: 1,
-      name: "Wireless Bluetooth Headphones",
-      originalPrice: 199.99,
-      salePrice: 79.99,
-      discount: 60,
-      image: "/wireless-headphones.png",
-      rating: 4.5,
-      reviews: 1250,
-    },
-    {
-      id: 2,
-      name: "Smart Fitness Watch",
-      originalPrice: 299.99,
-      salePrice: 149.99,
-      discount: 50,
-      image: "/smartwatch-lifestyle.png",
-      rating: 4.3,
-      reviews: 890,
-    },
-    {
-      id: 3,
-      name: "Premium Coffee Maker",
-      originalPrice: 249.99,
-      salePrice: 124.99,
-      discount: 50,
-      image: "/modern-coffee-maker.png",
-      rating: 4.7,
-      reviews: 567,
-    },
-    {
-      id: 4,
-      name: "Gaming Mechanical Keyboard",
-      originalPrice: 159.99,
-      salePrice: 79.99,
-      discount: 50,
-      image: "/gaming-keyboard.png",
-      rating: 4.6,
-      reviews: 2100,
-    },
-    {
-      id: 5,
-      name: "4K Webcam",
-      originalPrice: 129.99,
-      salePrice: 64.99,
-      discount: 50,
-      image: "/4k-webcam.png",
-      rating: 4.4,
-      reviews: 780,
-    },
-    {
-      id: 6,
-      name: "Portable Power Bank",
-      originalPrice: 79.99,
-      salePrice: 39.99,
-      discount: 50,
-      image: "/portable-power-bank.png",
-      rating: 4.2,
-      reviews: 1450,
-    },
-    {
-      id: 7,
-      name: "Wireless Charging Pad",
-      originalPrice: 49.99,
-      salePrice: 24.99,
-      discount: 50,
-      image: "/wireless-charger.png",
-      rating: 4.1,
-      reviews: 920,
-    },
-    {
-      id: 8,
-      name: "Bluetooth Speaker",
-      originalPrice: 89.99,
-      salePrice: 44.99,
-      discount: 50,
-      image: "/bluetooth-speaker.png",
-      rating: 4.5,
-      reviews: 1680,
-    },
-  ];
+  useEffect(() => {
+    const controller = new AbortController();
+    setIsLoading(true);
 
-  const topRatedProducts = [
-    {
-      id: 9,
-      name: "Premium Laptop Stand",
-      price: 89.99,
-      image: "/laptop-stand.png",
-      rating: 4.9,
-      reviews: 3200,
-    },
-    {
-      id: 10,
-      name: "Ergonomic Office Chair",
-      price: 299.99,
-      image: "/ergonomic-office-chair.png",
-      rating: 4.8,
-      reviews: 2850,
-    },
-    {
-      id: 11,
-      name: "Professional Camera Lens",
-      price: 599.99,
-      image: "/camera-lens.png",
-      rating: 4.9,
-      reviews: 1950,
-    },
-    {
-      id: 12,
-      name: "Smart Home Hub",
-      price: 149.99,
-      image: "/smart-home-hub.png",
-      rating: 4.8,
-      reviews: 2400,
-    },
-  ];
+    const getAllCategories = async () => {
+      try {
+        const response = await axios.get("/category/all?page=1&limit=8", {
+          signal: controller.signal,
+        });
+
+        setCategories(response.data.categories);
+      } catch (error: any) {
+        console.log(error);
+        toast.error("Failed to fetch categories");
+      }
+    };
+
+    const getAllDeals = async () => {
+      try {
+        const response = await axios.get("/product/all?page=1&limit=8", {
+          signal: controller.signal,
+        });
+
+        setDeals(response.data.products);
+      } catch (error: any) {
+        console.log(error);
+        toast.error("Failed to fetch products");
+      }
+    };
+
+    const getTopRated = async () => {
+      try {
+        const response = await axios.get("/product/all?page=1&limit=8", {
+          signal: controller.signal,
+        });
+
+        setDeals(response.data.products);
+      } catch (error: any) {
+        console.log(error);
+        toast.error("Failed to fetch products");
+      }
+    };
+
+    getAllCategories();
+    getAllDeals();
+    getTopRated();
+
+    setIsLoading(false);
+
+    return () => {
+      controller.abort();
+    };
+  }, []);
 
   return (
     <div className="min-h-screen bg-background">
@@ -211,43 +149,53 @@ export default function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {categories.map((category, index) => {
-              const IconComponent = category.icon;
-              return (
-                <Card
-                  key={index}
-                  className="group hover:shadow-lg transition-all duration-300 cursor-pointer border-border hover:border-accent/50"
-                >
-                  <CardContent className="p-0">
-                    <div className="relative overflow-hidden rounded-t-lg">
-                      <img
-                        src={category.image || "/placeholder.svg"}
-                        alt={category.name}
-                        className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-                      <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors duration-300"></div>
-                    </div>
-                    <div className="p-6">
-                      <div className="flex items-center gap-3 mb-2">
-                        <div className="p-2 bg-muted-foreground/10 rounded-lg group-hover:bg-muted-foreground/20 transition-colors duration-300">
-                          <IconComponent className="h-5 w-5 text-primary" />
-                        </div>
-                        <h3 className="text-xl font-semibold text-primary group-hover:text-primary/80 transition-colors duration-300">
-                          {category.name}
-                        </h3>
+            {isLoading ? (
+              <h3 className="text-xl font-semibold text-primary group-hover:text-primary/80 transition-colors duration-300">
+                Loading...
+              </h3>
+            ) : categories.length === 0 ? (
+              <h3 className="text-xl font-semibold text-primary group-hover:text-primary/80 transition-colors duration-300">
+                No Categories Found
+              </h3>
+            ) : (
+              categories.map((category, index) => {
+                //   const IconComponent = category.icon;
+                return (
+                  <Card
+                    key={index}
+                    className="group hover:shadow-lg transition-all duration-300 cursor-pointer border-border hover:border-accent/50"
+                  >
+                    <CardContent className="p-0">
+                      <div className="relative overflow-hidden rounded-t-lg">
+                        <img
+                          src={category.image.imageURL || "/placeholder.svg"}
+                          alt={category.alt}
+                          className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                        <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors duration-300"></div>
                       </div>
-                      <p className="text-muted-foreground mb-4">
-                        {category.description}
-                      </p>
-                      <Button className="w-full justify-between">
-                        Explore Category
-                        <ArrowRight className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
+                      <div className="p-6">
+                        <div className="flex items-center gap-3 mb-2">
+                          {/* <div className="p-2 bg-muted-foreground/10 rounded-lg group-hover:bg-muted-foreground/20 transition-colors duration-300">
+                          <IconComponent className="h-5 w-5 text-primary" />
+                        </div> */}
+                          <h3 className="text-xl font-semibold text-primary group-hover:text-primary/80 transition-colors duration-300">
+                            {category.categoryName}
+                          </h3>
+                        </div>
+                        <p className="text-muted-foreground mb-4">
+                          {category.categoryName}
+                        </p>
+                        <Button className="w-full justify-between">
+                          Explore Category
+                          <ArrowRight className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })
+            )}
           </div>
         </div>
       </section>
@@ -278,57 +226,78 @@ export default function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {dealsProducts.map((product) => (
-              <Card
-                key={product.id}
-                className="group hover:shadow-lg transition-all duration-300 cursor-pointer"
-              >
-                <CardContent className="p-0">
-                  <div className="relative overflow-hidden rounded-t-lg">
-                    <img
-                      src={product.image || "/placeholder.svg"}
-                      alt={product.name}
-                      className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
+            {isLoading ? (
+              <h3 className="text-xl font-semibold text-primary group-hover:text-primary/80 transition-colors duration-300">
+                Loading...
+              </h3>
+            ) : deals.length === 0 ? (
+              <h3 className="text-xl font-semibold text-primary group-hover:text-primary/80 transition-colors duration-300">
+                No Categories Found
+              </h3>
+            ) : (
+              deals.map((product, index) => (
+                <Card
+                  key={index}
+                  className="group hover:shadow-lg transition-all duration-300 cursor-pointer"
+                >
+                  <CardContent className="p-0">
+                    <div className="relative overflow-hidden rounded-t-lg">
+                      <img
+                        src={product.image.imageURL || "/placeholder.svg"}
+                        alt={product.alt}
+                        className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
 
-                    <Badge className="absolute top-2 left-2 bg-primary text-white">
-                      -{product.discount}%
-                    </Badge>
-                  </div>
-                  <div className="p-4">
-                    <h3 className="font-semibold text-primary mb-2 line-clamp-2">
-                      {product.name}
-                    </h3>
-                    <div className="flex items-center gap-1 mb-2">
-                      <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                      <span className="text-sm font-medium text-primary">
-                        {product.rating}
-                      </span>
-                      <span className="text-sm text-muted-foreground">
-                        ({product.reviews})
-                      </span>
+                      <Badge className="absolute top-2 left-2 bg-primary text-white">
+                        -{product.discount}%
+                      </Badge>
                     </div>
-                    <div className="mb-2">
-                      <span className="text-muted-foreground text-sm">
-                        ✓ In stock
-                      </span>
+                    <div className="p-4">
+                      <h3 className="font-semibold text-primary mb-2 line-clamp-2">
+                        {product.productName}
+                      </h3>
+                      <h2 className="text-muted-foreground mb-2 line-clamp-2">
+                        {product.productCategory.categoryName}
+                      </h2>
+                      <div className="flex items-center gap-1 mb-2">
+                        <span className="text-sm font-medium text-primary">
+                          Seller
+                        </span>
+                        <span className="text-sm text-muted-foreground">
+                          ({product.seller.username})
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1 mb-2">
+                        <Star className="h-4 w-4 fill-primary text-primary" />
+                        <span className="text-sm font-medium text-primary">
+                          4.5
+                        </span>
+                        <span className="text-sm text-muted-foreground">
+                          (433)
+                        </span>
+                      </div>
+                      <div className="mb-2">
+                        <span className="text-muted-foreground text-sm">
+                          ✓ In stock
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2 mb-3">
+                        <span className="text-lg font-bold text-primary">
+                          ${product.actualPrice}
+                        </span>
+                        <span className="text-sm text-muted-foreground line-through">
+                          ${product.price}
+                        </span>
+                      </div>
+                      <Button className="w-full" size="sm">
+                        <ShoppingCart className="h-4 w-4 mr-2" />
+                        Add to Cart
+                      </Button>
                     </div>
-                    <div className="flex items-center gap-2 mb-3">
-                      <span className="text-lg font-bold text-primary">
-                        ${product.salePrice}
-                      </span>
-                      <span className="text-sm text-muted-foreground line-through">
-                        ${product.originalPrice}
-                      </span>
-                    </div>
-                    <Button className="w-full" size="sm">
-                      <ShoppingCart className="h-4 w-4 mr-2" />
-                      Add to Cart
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                  </CardContent>
+                </Card>
+              ))
+            )}
           </div>
         </div>
       </section>
@@ -359,55 +328,78 @@ export default function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {topRatedProducts.map((product) => (
-              <Card
-                key={product.id}
-                className="group hover:shadow-lg transition-all duration-300 cursor-pointer"
-              >
-                <CardContent className="p-0">
-                  <div className="relative overflow-hidden rounded-t-lg">
-                    <img
-                      src={product.image || "/placeholder.svg"}
-                      alt={product.name}
-                      className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
+            {isLoading ? (
+              <h3 className="text-xl font-semibold text-primary group-hover:text-primary/80 transition-colors duration-300">
+                Loading...
+              </h3>
+            ) : deals.length === 0 ? (
+              <h3 className="text-xl font-semibold text-primary group-hover:text-primary/80 transition-colors duration-300">
+                No Categories Found
+              </h3>
+            ) : (
+              deals.map((product, index) => (
+                <Card
+                  key={index}
+                  className="group hover:shadow-lg transition-all duration-300 cursor-pointer"
+                >
+                  <CardContent className="p-0">
+                    <div className="relative overflow-hidden rounded-t-lg">
+                      <img
+                        src={product.image.imageURL || "/placeholder.svg"}
+                        alt={product.alt}
+                        className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
 
-                    <Badge className="absolute top-2 left-2 bg-primary text-white">
-                      HOT
-                    </Badge>
-                  </div>
-                  <div className="p-4">
-                    <h3 className="font-semibold text-primary mb-2 line-clamp-2">
-                      {product.name}
-                    </h3>
-                    <div className="flex items-center gap-1 mb-2">
-                      <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                      <span className="text-sm font-medium text-primary">
-                        {product.rating}
-                      </span>
-                      <span className="text-sm text-muted-foreground">
-                        ({product.reviews})
-                      </span>
+                      <Badge className="absolute top-2 left-2 bg-primary text-white">
+                        -{product.discount}%
+                      </Badge>
                     </div>
-                    <div className="mb-2">
-                      <span className="text-muted-foreground text-sm">
-                        ✓ In stock
-                      </span>
+                    <div className="p-4">
+                      <h3 className="font-semibold text-primary mb-2 line-clamp-2">
+                        {product.productName}
+                      </h3>
+                      <h2 className="text-muted-foreground mb-2 line-clamp-2">
+                        {product.productCategory.categoryName}
+                      </h2>
+                      <div className="flex items-center gap-1 mb-2">
+                        <span className="text-sm font-medium text-primary">
+                          Seller
+                        </span>
+                        <span className="text-sm text-muted-foreground">
+                          ({product.seller.username})
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1 mb-2">
+                        <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                        <span className="text-sm font-medium text-primary">
+                          4.5
+                        </span>
+                        <span className="text-sm text-muted-foreground">
+                          (433)
+                        </span>
+                      </div>
+                      <div className="mb-2">
+                        <span className="text-muted-foreground text-sm">
+                          ✓ In stock
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2 mb-3">
+                        <span className="text-lg font-bold text-primary">
+                          ${product.actualPrice}
+                        </span>
+                        <span className="text-sm text-muted-foreground line-through">
+                          ${product.price}
+                        </span>
+                      </div>
+                      <Button className="w-full" size="sm">
+                        <ShoppingCart className="h-4 w-4 mr-2" />
+                        Add to Cart
+                      </Button>
                     </div>
-                    <div className="flex items-center gap-2 mb-3">
-                      <span className="text-lg font-bold text-primary">
-                        ${product.price}
-                      </span>
-                      {/* <span className="text-sm text-muted-foreground line-through">${product.originalPrice}</span> */}
-                    </div>
-                    <Button className="w-full" size="sm">
-                      <ShoppingCart className="h-4 w-4 mr-2" />
-                      Add to Cart
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                  </CardContent>
+                </Card>
+              ))
+            )}
           </div>
         </div>
       </section>
