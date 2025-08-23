@@ -3,6 +3,7 @@ import HomePage from "@/pages/user/HomePage";
 import LoginPage from "@/pages/user/LoginPage";
 import RegisterPage from "@/pages/user/RegisterPage";
 import ShopPage from "@/pages/user/ShopPage";
+import VerifyOtpPage from "@/pages/user/VerifyOtpPage";
 import { Route, Routes } from "react-router-dom";
 
 function AppRoutes() {
@@ -11,6 +12,7 @@ function AppRoutes() {
       <Routes>
         <Route path="/" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/verify/:email" element={<VerifyOtpPage />} />
 
         <Route element={<MainLayout />}>
           <Route path="/home" element={<HomePage />} />
