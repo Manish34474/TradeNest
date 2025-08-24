@@ -4,6 +4,7 @@ import MainLayout from "@/components/layout/MainLayout";
 import CategoryPage from "@/pages/user/CategoryPage";
 import HomePage from "@/pages/user/HomePage";
 import LoginPage from "@/pages/user/LoginPage";
+import ProductPage from "@/pages/user/ProductPage";
 import RegisterPage from "@/pages/user/RegisterPage";
 import ShopPage from "@/pages/user/ShopPage";
 import VerifyOtpPage from "@/pages/user/VerifyOtpPage";
@@ -23,6 +24,7 @@ function AppRoutes() {
               <Route path="/home" element={<HomePage />} />
               <Route path="/shop" element={<ShopPage />} />
               <Route path="/category/:slug" element={<CategoryPage />} />
+              <Route path="/product/:slug" element={<ProductPage />} />
             </Route>
           </Route>
         </Route>

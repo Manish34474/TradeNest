@@ -1,11 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
-import axios from "@/api/axios";
 import { toast } from "sonner";
 import { isAxiosError } from "axios";
 import { Loading } from "@/components/user/Loading";
 import { Link, useParams } from "react-router-dom";
 import { ProductCard } from "@/components/user/ProductCard";
+import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 
 interface Category {
   _id: string;
@@ -47,6 +47,8 @@ export default function ShopPage() {
   const params = useParams();
   const categorySlug = params.slug;
 
+  const axiosPrivate = useAxiosPrivate();
+
   const [category, setCategory] = useState<Category>();
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -62,7 +64,7 @@ export default function ShopPage() {
 
     const getCategory = async () => {
       try {
-        const response = await axios.get(
+        const response = await axiosPrivate.get(
           `/category/${categorySlug}?page=${currentPage}&limit=${limit}`,
           {
             signal: controller.signal,

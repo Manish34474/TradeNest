@@ -2,12 +2,12 @@ import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { useEffect, useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
-import axios from "@/api/axios";
 import { toast } from "sonner";
 import { isAxiosError } from "axios";
 import { Loading } from "@/components/user/Loading";
 import { Link } from "react-router-dom";
 import { ProductCard } from "@/components/user/ProductCard";
+import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 
 interface Product {
   _id: string;
@@ -37,6 +37,8 @@ interface Product {
 export default function ShopPage() {
   const [priceRange, setPriceRange] = useState([0, 1000]);
 
+  const axiosPrivate = useAxiosPrivate();
+
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -51,7 +53,7 @@ export default function ShopPage() {
 
     const getProducts = async () => {
       try {
-        const response = await axios.get(
+        const response = await axiosPrivate.get(
           `/product/all?page=${currentPage}&limit=${limit}`,
           {
             signal: controller.signal,
