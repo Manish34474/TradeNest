@@ -2,6 +2,7 @@ import axios from "@/api/axios";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { isAxiosError } from "axios";
 import {
   ArrowRight,
   ShoppingBag,
@@ -59,48 +60,41 @@ export default function HomePage() {
     const controller = new AbortController();
     setIsLoading(true);
 
-    const getAllCategories = async () => {
+    const getData = async () => {
       try {
-        const response = await axios.get("/category/all?page=1&limit=8", {
+        // get categories
+        const catRes = await axios.get("/category/all?page=1&limit=8", {
           signal: controller.signal,
         });
+        setCategories(catRes.data.categories);
 
-        setCategories(response.data.categories);
-      } catch (error: any) {
-        console.log(error);
-        toast.error("Failed to fetch categories");
+        // get deals
+        const dealRes = await axios.get("/product/all?page=1&limit=8", {
+          signal: controller.signal,
+        });
+        setDeals(dealRes.data.products);
+
+        // get top
+        const topRes = await axios.get("/product/all?page=1&limit=8", {
+          signal: controller.signal,
+        });
+        setTopRated(topRes.data.products);
+      } catch (error) {
+        if (isAxiosError(error)) {
+          if (error.code === "ERR_CANCELED") {
+            return;
+          } else if (!error.response) {
+            toast.error("No Server Response");
+          } else if (error.response.status === 401) {
+            toast.error("Unauthorized");
+          } else {
+            toast.error("Oops!!! Something went wrong. Try again");
+          }
+        }
       }
     };
 
-    const getAllDeals = async () => {
-      try {
-        const response = await axios.get("/product/all?page=1&limit=8", {
-          signal: controller.signal,
-        });
-
-        setDeals(response.data.products);
-      } catch (error: any) {
-        console.log(error);
-        toast.error("Failed to fetch products");
-      }
-    };
-
-    const getTopRated = async () => {
-      try {
-        const response = await axios.get("/product/all?page=1&limit=8", {
-          signal: controller.signal,
-        });
-
-        setTopRated(response.data.products);
-      } catch (error: any) {
-        console.log(error);
-        toast.error("Failed to fetch products");
-      }
-    };
-
-    getAllCategories();
-    getAllDeals();
-    getTopRated();
+    getData();
 
     setIsLoading(false);
 
