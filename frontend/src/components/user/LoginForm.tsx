@@ -15,10 +15,13 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "@/api/axios";
 import { toast } from "sonner";
 import { isAxiosError } from "axios";
+import useAuth from "@/hooks/useAuth";
 
 const LOGIN_URL = "/auth/login";
 
 export function LoginForm() {
+  const { setAuth } = useAuth();
+
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -31,17 +34,29 @@ export function LoginForm() {
     setIsLoading(true);
 
     try {
-      await axios.post(LOGIN_URL, JSON.stringify({ email, pass }), {
-        headers: { "Content-Type": "application/json" },
-        withCredentials: true,
-      });
+      const response = await axios.post(
+        LOGIN_URL,
+        JSON.stringify({ email, pass }),
+        {
+          headers: { "Content-Type": "application/json" },
+          withCredentials: true,
+        }
+      );
+
+      const id = response.data.id;
+      const username = response.data.username;
+      const userEmail = response.data.email;
+      const roles = response.data.roles;
+      const accessToken = response.data.accessToken;
+
+      setAuth({ id, username, email: userEmail, roles, accessToken });
 
       setEmail("");
       setPass("");
 
       navigate("/shop");
 
-      toast.success("Logged In Successfully");
+      toast.success(`Welcome, ${username}`);
     } catch (error) {
       if (isAxiosError(error)) {
         if (!error?.response) {

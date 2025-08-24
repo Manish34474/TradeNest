@@ -1,3 +1,4 @@
+import RequireAuth from "@/components/auth/RequireAuth";
 import MainLayout from "@/components/layout/MainLayout";
 import HomePage from "@/pages/user/HomePage";
 import LoginPage from "@/pages/user/LoginPage";
@@ -15,8 +16,10 @@ function AppRoutes() {
         <Route path="/verify/:email" element={<VerifyOtpPage />} />
 
         <Route element={<MainLayout />}>
-          <Route path="/home" element={<HomePage />} />
-          <Route path="/shop" element={<ShopPage />} />
+          <Route element={<RequireAuth allowedRoles={[848]} />}>
+            <Route path="/home" element={<HomePage />} />
+            <Route path="/shop" element={<ShopPage />} />
+          </Route>
         </Route>
       </Routes>
     </div>
