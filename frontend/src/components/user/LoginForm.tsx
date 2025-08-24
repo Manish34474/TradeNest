@@ -10,33 +10,51 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Eye, EyeOff, ShoppingBag } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
+import axios from "@/api/axios";
+import { toast } from "sonner";
+import { isAxiosError } from "axios";
+
+const LOGIN_URL = "/auth/login";
 
 export function LoginForm() {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [pass, setPass] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
     setIsLoading(true);
 
-    // Simulate login process
-    setTimeout(() => {
-      if (email === "anupam@gmail.com" && password === "anupam") {
-        navigate("/home");
-      } else {
-        setError("Invalid email or password. Please try again.");
+    try {
+      await axios.post(LOGIN_URL, JSON.stringify({ email, pass }), {
+        headers: { "Content-Type": "application/json" },
+        withCredentials: true,
+      });
+
+      setEmail("");
+      setPass("");
+
+      navigate("/shop");
+
+      toast.success("Logged In Successfully");
+    } catch (error) {
+      if (isAxiosError(error)) {
+        if (!error?.response) {
+          toast.error("No Server Response");
+        } else if (error.response?.status === 400) {
+          toast.error("Missing Username or Password");
+        } else if (error.response?.status === 401) {
+          toast.error("Unauthorized");
+        } else {
+          toast.error("Oops!!! Something went wrong. Try again");
+        }
       }
-      setIsLoading(false);
-    }, 1000);
+    }
   };
 
   return (
@@ -56,12 +74,6 @@ export function LoginForm() {
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
-          {error && (
-            <Alert variant="destructive">
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
-
           <div className="space-y-2">
             <Label htmlFor="email" className="text-sm font-medium">
               Email address
@@ -86,8 +98,8 @@ export function LoginForm() {
                 id="password"
                 type={showPassword ? "text" : "password"}
                 placeholder="Enter your password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                value={pass}
+                onChange={(e) => setPass(e.target.value)}
                 required
                 className="h-11 pr-10"
               />
@@ -99,9 +111,9 @@ export function LoginForm() {
                 onClick={() => setShowPassword(!showPassword)}
               >
                 {showPassword ? (
-                  <EyeOff className="h-4 w-4 text-muted" />
+                  <EyeOff className="h-4 w-4 text-muted-foreground" />
                 ) : (
-                  <Eye className="h-4 w-4 text-muted" />
+                  <Eye className="h-4 w-4 text-muted-foreground" />
                 )}
               </Button>
             </div>
