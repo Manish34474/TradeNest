@@ -1,3 +1,4 @@
+import PersistLogin from "@/components/auth/PersistLogin";
 import RequireAuth from "@/components/auth/RequireAuth";
 import MainLayout from "@/components/layout/MainLayout";
 import HomePage from "@/pages/user/HomePage";
@@ -15,10 +16,12 @@ function AppRoutes() {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/verify/:email" element={<VerifyOtpPage />} />
 
-        <Route element={<MainLayout />}>
+        <Route element={<PersistLogin />}>
           <Route element={<RequireAuth allowedRoles={[848]} />}>
-            <Route path="/home" element={<HomePage />} />
-            <Route path="/shop" element={<ShopPage />} />
+            <Route element={<MainLayout />}>
+              <Route path="/home" element={<HomePage />} />
+              <Route path="/shop" element={<ShopPage />} />
+            </Route>
           </Route>
         </Route>
       </Routes>
