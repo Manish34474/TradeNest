@@ -9,7 +9,7 @@ import catchAsync from "../helpers/catchAsync.helper";
 const authRouter = Router();
 
 authRouter.post("/login", catchAsync(handleLogin));
-authRouter.post("/refresh", catchAsync(handleRefresh));
+authRouter.get("/refresh", catchAsync(handleRefresh));
 authRouter.post("/logout", catchAsync(handleLogout));
 
 export default authRouter;
