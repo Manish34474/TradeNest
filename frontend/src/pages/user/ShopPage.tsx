@@ -1,8 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Slider } from "@/components/ui/slider";
-import { Star, ShoppingCart } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import axios from "@/api/axios";
@@ -10,6 +7,7 @@ import { toast } from "sonner";
 import { isAxiosError } from "axios";
 import { Loading } from "@/components/user/Loading";
 import { Link } from "react-router-dom";
+import { ProductCard } from "@/components/user/ProductCard";
 
 interface Product {
   _id: string;
@@ -252,72 +250,18 @@ export default function ShopPage() {
                 </h3>
               ) : (
                 products.map((product, index) => (
-                  <Card
+                  <ProductCard
                     key={index}
-                    className="group hover:shadow-lg transition-all duration-300 cursor-pointer"
-                  >
-                    <CardContent className="p-0">
-                      <div className="relative overflow-hidden rounded-t-lg">
-                        <img
-                          src={product.image.imageURL || "/placeholder.svg"}
-                          alt={product.alt}
-                          className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                        />
-
-                        <Badge className="absolute top-2 left-2 bg-primary text-white">
-                          -{product.discount}%
-                        </Badge>
-                      </div>
-                      <div className="p-4">
-                        <h3 className="font-semibold text-primary mb-2 line-clamp-2">
-                          {product.productName}
-                        </h3>
-                        <h2 className="text-muted-foreground mb-2 line-clamp-2">
-                          {product.productCategory.categoryName}
-                        </h2>
-                        <div className="flex items-center gap-1 mb-2">
-                          <span className="text-sm font-medium text-primary">
-                            Seller
-                          </span>
-                          <span className="text-sm text-muted-foreground">
-                            ({product.seller.username})
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-1 mb-2">
-                          <Star className="h-4 w-4 fill-primary text-primary" />
-                          <span className="text-sm font-medium text-primary">
-                            4.5
-                          </span>
-                          <span className="text-sm text-muted-foreground">
-                            (433)
-                          </span>
-                        </div>
-                        <div className="mb-2">
-                          {product.stock > 0 ? (
-                            <span className="text-muted-foreground text-sm">
-                              ✔ In stock
-                            </span>
-                          ) : (
-                            <span className="text-muted-foreground text-sm">
-                              ✘ In stock
-                            </span>
-                          )}
-                        </div>
-                        <div className="flex items-center gap-2 mb-3">
-                          <span className="text-lg font-bold text-primary">
-                            ${product.actualPrice}
-                          </span>
-                          <span className="text-sm text-muted-foreground line-through">
-                            ${product.price}
-                          </span>
-                        </div>
-                        <Button className="w-full" size="sm">
-                          <ShoppingCart className="h-4 w-4 mr-2" />
-                          Add to Cart
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
+                    image={product.image.imageURL}
+                    alt={product.alt}
+                    name={product.productName}
+                    category={product.productCategory.categoryName}
+                    seller={product.seller.username}
+                    stock={product.stock}
+                    price={product.price}
+                    actualPrice={product.actualPrice}
+                    discount={product.discount}
+                  />
                 ))
               )}
             </div>

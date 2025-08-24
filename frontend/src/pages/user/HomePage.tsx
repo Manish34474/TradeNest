@@ -1,16 +1,10 @@
-import axios from "@/api/axios";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Loading } from "@/components/user/Loading";
+import { ProductCard } from "@/components/user/ProductCard";
+import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 import { isAxiosError } from "axios";
-import {
-  ArrowRight,
-  ShoppingBag,
-  Smartphone,
-  ShoppingCart,
-  Star,
-} from "lucide-react";
+import { ArrowRight, ShoppingBag, Smartphone } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -58,6 +52,8 @@ export default function HomePage() {
   const [topRated, setTopRated] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
+  const axiosPrivate = useAxiosPrivate();
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -67,19 +63,19 @@ export default function HomePage() {
     const getData = async () => {
       try {
         // get categories
-        const catRes = await axios.get("/category/all?page=1&limit=8", {
+        const catRes = await axiosPrivate.get("/category/all?page=1&limit=8", {
           signal: controller.signal,
         });
         setCategories(catRes.data.categories);
 
         // get deals
-        const dealRes = await axios.get("/product/all?page=1&limit=8", {
+        const dealRes = await axiosPrivate.get("/product/all?page=1&limit=8", {
           signal: controller.signal,
         });
         setDeals(dealRes.data.products);
 
         // get top
-        const topRes = await axios.get("/product/all?page=1&limit=8", {
+        const topRes = await axiosPrivate.get("/product/all?page=1&limit=8", {
           signal: controller.signal,
         });
         setTopRated(topRes.data.products);
@@ -160,6 +156,7 @@ export default function HomePage() {
                   <Card
                     key={index}
                     className="group hover:shadow-lg transition-all duration-300 cursor-pointer border-border hover:border-accent/50"
+                    onClick={() => navigate(`/category/${category.slug}`)}
                   >
                     <CardContent className="p-0">
                       <div className="relative overflow-hidden rounded-t-lg">
@@ -230,66 +227,18 @@ export default function HomePage() {
               </h3>
             ) : (
               deals.map((product, index) => (
-                <Card
+                <ProductCard
                   key={index}
-                  className="group hover:shadow-lg transition-all duration-300 cursor-pointer"
-                >
-                  <CardContent className="p-0">
-                    <div className="relative overflow-hidden rounded-t-lg">
-                      <img
-                        src={product.image.imageURL || "/placeholder.svg"}
-                        alt={product.alt}
-                        className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-
-                      <Badge className="absolute top-2 left-2 bg-primary text-white">
-                        -{product.discount}%
-                      </Badge>
-                    </div>
-                    <div className="p-4">
-                      <h3 className="font-semibold text-primary mb-2 line-clamp-2">
-                        {product.productName}
-                      </h3>
-                      <h2 className="text-muted-foreground mb-2 line-clamp-2">
-                        {product.productCategory.categoryName}
-                      </h2>
-                      <div className="flex items-center gap-1 mb-2">
-                        <span className="text-sm font-medium text-primary">
-                          Seller
-                        </span>
-                        <span className="text-sm text-muted-foreground">
-                          ({product.seller.username})
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-1 mb-2">
-                        <Star className="h-4 w-4 fill-primary text-primary" />
-                        <span className="text-sm font-medium text-primary">
-                          4.5
-                        </span>
-                        <span className="text-sm text-muted-foreground">
-                          (433)
-                        </span>
-                      </div>
-                      <div className="mb-2">
-                        <span className="text-muted-foreground text-sm">
-                          ✓ In stock
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2 mb-3">
-                        <span className="text-lg font-bold text-primary">
-                          ${product.actualPrice}
-                        </span>
-                        <span className="text-sm text-muted-foreground line-through">
-                          ${product.price}
-                        </span>
-                      </div>
-                      <Button className="w-full" size="sm">
-                        <ShoppingCart className="h-4 w-4 mr-2" />
-                        Add to Cart
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
+                  image={product.image.imageURL}
+                  alt={product.alt}
+                  name={product.productName}
+                  category={product.productCategory.categoryName}
+                  seller={product.seller.username}
+                  stock={product.stock}
+                  price={product.price}
+                  actualPrice={product.actualPrice}
+                  discount={product.discount}
+                />
               ))
             )}
           </div>
@@ -330,66 +279,18 @@ export default function HomePage() {
               </h3>
             ) : (
               deals.map((product, index) => (
-                <Card
+                <ProductCard
                   key={index}
-                  className="group hover:shadow-lg transition-all duration-300 cursor-pointer"
-                >
-                  <CardContent className="p-0">
-                    <div className="relative overflow-hidden rounded-t-lg">
-                      <img
-                        src={product.image.imageURL || "/placeholder.svg"}
-                        alt={product.alt}
-                        className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-
-                      <Badge className="absolute top-2 left-2 bg-primary text-white">
-                        -{product.discount}%
-                      </Badge>
-                    </div>
-                    <div className="p-4">
-                      <h3 className="font-semibold text-primary mb-2 line-clamp-2">
-                        {product.productName}
-                      </h3>
-                      <h2 className="text-muted-foreground mb-2 line-clamp-2">
-                        {product.productCategory.categoryName}
-                      </h2>
-                      <div className="flex items-center gap-1 mb-2">
-                        <span className="text-sm font-medium text-primary">
-                          Seller
-                        </span>
-                        <span className="text-sm text-muted-foreground">
-                          ({product.seller.username})
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-1 mb-2">
-                        <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                        <span className="text-sm font-medium text-primary">
-                          4.5
-                        </span>
-                        <span className="text-sm text-muted-foreground">
-                          (433)
-                        </span>
-                      </div>
-                      <div className="mb-2">
-                        <span className="text-muted-foreground text-sm">
-                          ✓ In stock
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2 mb-3">
-                        <span className="text-lg font-bold text-primary">
-                          ${product.actualPrice}
-                        </span>
-                        <span className="text-sm text-muted-foreground line-through">
-                          ${product.price}
-                        </span>
-                      </div>
-                      <Button className="w-full" size="sm">
-                        <ShoppingCart className="h-4 w-4 mr-2" />
-                        Add to Cart
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
+                  image={product.image.imageURL}
+                  alt={product.alt}
+                  name={product.productName}
+                  category={product.productCategory.categoryName}
+                  seller={product.seller.username}
+                  stock={product.stock}
+                  price={product.price}
+                  actualPrice={product.actualPrice}
+                  discount={product.discount}
+                />
               ))
             )}
           </div>
