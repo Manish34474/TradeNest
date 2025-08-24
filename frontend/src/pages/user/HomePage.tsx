@@ -2,6 +2,7 @@ import axios from "@/api/axios";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Loading } from "@/components/user/Loading";
 import { isAxiosError } from "axios";
 import {
   ArrowRight,
@@ -11,6 +12,7 @@ import {
   Star,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 interface Category {
@@ -55,6 +57,8 @@ export default function HomePage() {
   const [deals, setDeals] = useState<Product[]>([]);
   const [topRated, setTopRated] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const controller = new AbortController();
@@ -121,6 +125,7 @@ export default function HomePage() {
             <Button
               size="lg"
               className="bg-secondary hover:bg-secondary/90 text-accent-foreground cursor-pointer"
+              onClick={() => navigate("/shop")}
             >
               Start Shopping
               <ArrowRight className="ml-2 h-5 w-5" />
@@ -144,16 +149,13 @@ export default function HomePage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {isLoading ? (
-              <h3 className="text-xl font-semibold text-primary group-hover:text-primary/80 transition-colors duration-300">
-                Loading...
-              </h3>
+              <Loading size="sm" className="col-span-full" />
             ) : categories.length === 0 ? (
               <h3 className="text-xl font-semibold text-primary group-hover:text-primary/80 transition-colors duration-300">
                 No Categories Found
               </h3>
             ) : (
               categories.map((category, index) => {
-                //   const IconComponent = category.icon;
                 return (
                   <Card
                     key={index}
@@ -212,18 +214,16 @@ export default function HomePage() {
               asChild
               className="ml-8 bg-transparent"
             >
-              <a href="/shop">
+              <Link to="/shop">
                 View More Deals
                 <ArrowRight className="ml-2 h-5 w-5" />
-              </a>
+              </Link>
             </Button>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {isLoading ? (
-              <h3 className="text-xl font-semibold text-primary group-hover:text-primary/80 transition-colors duration-300">
-                Loading...
-              </h3>
+              <Loading size="sm" />
             ) : deals.length === 0 ? (
               <h3 className="text-xl font-semibold text-primary group-hover:text-primary/80 transition-colors duration-300">
                 No Categories Found
@@ -314,18 +314,16 @@ export default function HomePage() {
               asChild
               className="ml-8 bg-transparent"
             >
-              <a href="/shop">
+              <Link to="/shop">
                 View All Products
                 <ArrowRight className="ml-2 h-5 w-5" />
-              </a>
+              </Link>
             </Button>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {isLoading ? (
-              <h3 className="text-xl font-semibold text-primary group-hover:text-primary/80 transition-colors duration-300">
-                Loading...
-              </h3>
+              <Loading size="sm" />
             ) : topRated.length === 0 ? (
               <h3 className="text-xl font-semibold text-primary group-hover:text-primary/80 transition-colors duration-300">
                 No Categories Found

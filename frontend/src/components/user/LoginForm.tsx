@@ -54,7 +54,7 @@ export function LoginForm() {
       setEmail("");
       setPass("");
 
-      navigate("/shop");
+      navigate("/home");
 
       toast.success(`Welcome, ${username}`);
     } catch (error) {
