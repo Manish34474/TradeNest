@@ -3,9 +3,10 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { isAxiosError } from "axios";
 import { Loading } from "@/components/user/Loading";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { ProductCard } from "@/components/user/ProductCard";
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
+import useCart from "@/hooks/useCart";
 
 interface Category {
   _id: string;
@@ -48,6 +49,9 @@ export default function ShopPage() {
   const categorySlug = params.slug;
 
   const axiosPrivate = useAxiosPrivate();
+
+  const { addToCart } = useCart();
+  const navigate = useNavigate();
 
   const [category, setCategory] = useState<Category>();
   const [products, setProducts] = useState<Product[]>([]);
@@ -176,6 +180,8 @@ export default function ShopPage() {
                   price={product.price}
                   actualPrice={product.actualPrice}
                   discount={product.discount}
+                  onAddToCart={() => addToCart(product._id)}
+                  onClick={() => navigate(`/product/${product.slug}`)}
                 />
               ))
             )}

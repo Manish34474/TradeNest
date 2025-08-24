@@ -13,6 +13,8 @@ export function ProductCard({
   price,
   actualPrice,
   discount,
+  onAddToCart,
+  onClick,
 }: {
   image: string;
   alt: string;
@@ -23,9 +25,14 @@ export function ProductCard({
   price: number;
   actualPrice: number;
   discount: number;
+  onAddToCart: () => void;
+  onClick: () => void;
 }) {
   return (
-    <Card className="group hover:shadow-lg transition-all duration-300 cursor-pointer">
+    <Card
+      className="group hover:shadow-lg transition-all duration-300 cursor-pointer"
+      onClick={onClick}
+    >
       <CardContent className="p-0">
         <div className="relative overflow-hidden rounded-t-lg">
           <img
@@ -63,13 +70,20 @@ export function ProductCard({
           </div>
           <div className="flex items-center gap-2 mb-3">
             <span className="text-lg font-bold text-primary">
-              ${actualPrice}
+              £{actualPrice}
             </span>
             <span className="text-sm text-muted-foreground line-through">
-              ${price}
+              £{price}
             </span>
           </div>
-          <Button className="w-full" size="sm">
+          <Button
+            className="w-full"
+            size="sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              onAddToCart();
+            }}
+          >
             <ShoppingCart className="h-4 w-4 mr-2" />
             Add to Cart
           </Button>

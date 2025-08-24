@@ -5,9 +5,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { isAxiosError } from "axios";
 import { Loading } from "@/components/user/Loading";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ProductCard } from "@/components/user/ProductCard";
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
+import useCart from "@/hooks/useCart";
 
 interface Product {
   _id: string;
@@ -37,7 +38,10 @@ interface Product {
 export default function ShopPage() {
   const [priceRange, setPriceRange] = useState([0, 1000]);
 
+  const navigate = useNavigate();
+
   const axiosPrivate = useAxiosPrivate();
+  const { addToCart } = useCart();
 
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -263,6 +267,8 @@ export default function ShopPage() {
                     price={product.price}
                     actualPrice={product.actualPrice}
                     discount={product.discount}
+                    onAddToCart={() => addToCart(product._id)}
+                    onClick={() => navigate(`/product/${product.slug}`)}
                   />
                 ))
               )}

@@ -18,9 +18,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import useLogout from "@/hooks/useLogout";
+import useCart from "@/hooks/useCart";
 
 export function Header() {
   const logout = useLogout();
+
+  const { totalItems, totalPrice } = useCart();
 
   const signout = async () => {
     await logout();
@@ -86,10 +89,12 @@ export function Header() {
               className="relative flex items-center gap-2"
             >
               <ShoppingCart className="h-5 w-5 text-foreground" />
-              <span className="text-sm font-medium text-foreground">$0.00</span>
+              <span className="text-sm font-medium text-foreground">
+                £{totalPrice}
+              </span>
               {/* Cart item count badge */}
               <span className="absolute -top-2 -right-2 bg-accent text-accent-foreground text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-                0
+                {totalItems}
               </span>
               <span className="sr-only">Shopping cart</span>
             </Button>

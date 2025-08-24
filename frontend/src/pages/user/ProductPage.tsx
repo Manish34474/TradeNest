@@ -10,6 +10,7 @@ import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 import { isAxiosError } from "axios";
 import { toast } from "sonner";
 import { Loading } from "@/components/user/Loading";
+import useCart from "@/hooks/useCart";
 
 interface Product {
   _id: string;
@@ -39,6 +40,8 @@ interface Product {
 
 export default function ProductPage() {
   const axiosPrivate = useAxiosPrivate();
+
+  const { updateCart } = useCart();
 
   const params = useParams();
   const productSlug = params.slug as string;
@@ -103,7 +106,7 @@ export default function ProductPage() {
           {/* Breadcrubm */}
           <div className="container mx-auto px-4 py-4">
             <nav className="flex items-center space-x-2 text-sm text-muted-foreground">
-              <Link to="/" className="hover:text-foreground">
+              <Link to="/home" className="hover:text-foreground">
                 Home
               </Link>
               <span>/</span>
@@ -118,7 +121,9 @@ export default function ProductPage() {
                 {product.productCategory.categoryName}
               </Link>
               <span>/</span>
-              <span className="text-foreground">{product.productName}</span>
+              <span className="text-primary font-medium">
+                {product.productName}
+              </span>
             </nav>
           </div>
 
@@ -274,6 +279,7 @@ export default function ProductPage() {
                       className="flex-1 w-max"
                       size="lg"
                       disabled={product.stock > 0 ? false : true}
+                      onClick={() => updateCart(product._id, quantity)}
                     >
                       <ShoppingCart className="w-5 h-5 mr-2" />
                       Add to Cart

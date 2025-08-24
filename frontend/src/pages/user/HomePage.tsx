@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Loading } from "@/components/user/Loading";
 import { ProductCard } from "@/components/user/ProductCard";
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
+import useCart from "@/hooks/useCart";
 import { isAxiosError } from "axios";
 import { ArrowRight, ShoppingBag, Smartphone } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -51,6 +52,8 @@ export default function HomePage() {
   const [deals, setDeals] = useState<Product[]>([]);
   const [topRated, setTopRated] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  const { addToCart } = useCart();
 
   const axiosPrivate = useAxiosPrivate();
 
@@ -241,6 +244,8 @@ export default function HomePage() {
                   price={product.price}
                   actualPrice={product.actualPrice}
                   discount={product.discount}
+                  onAddToCart={() => addToCart(product._id)}
+                  onClick={() => navigate(`/product/${product.slug}`)}
                 />
               ))
             )}
@@ -293,6 +298,8 @@ export default function HomePage() {
                   price={product.price}
                   actualPrice={product.actualPrice}
                   discount={product.discount}
+                  onAddToCart={() => addToCart(product._id)}
+                  onClick={() => navigate(`/product/${product.slug}`)}
                 />
               ))
             )}

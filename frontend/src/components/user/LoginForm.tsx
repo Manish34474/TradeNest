@@ -69,6 +69,8 @@ export function LoginForm() {
           toast.error("Oops!!! Something went wrong. Try again");
         }
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
