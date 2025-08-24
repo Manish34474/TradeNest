@@ -179,7 +179,10 @@ export default function HomePage() {
                         <p className="text-muted-foreground mb-4">
                           {category.categoryName}
                         </p>
-                        <Button className="w-full justify-between">
+                        <Button
+                          className="w-full justify-between"
+                          onClick={() => navigate(`/category/${category.slug}`)}
+                        >
                           Explore Category
                           <ArrowRight className="h-4 w-4" />
                         </Button>

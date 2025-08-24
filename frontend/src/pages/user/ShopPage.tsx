@@ -290,7 +290,11 @@ export default function ShopPage() {
                 })}
                 <Button
                   variant="outline"
-                  disabled={currentPage === totalPages ? true : false}
+                  disabled={
+                    currentPage === totalPages || totalPages === 0
+                      ? true
+                      : false
+                  }
                   onClick={() => setCurrentPage(currentPage + 1)}
                 >
                   Next

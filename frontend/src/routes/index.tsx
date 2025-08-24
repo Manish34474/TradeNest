@@ -1,6 +1,7 @@
 import PersistLogin from "@/components/auth/PersistLogin";
 import RequireAuth from "@/components/auth/RequireAuth";
 import MainLayout from "@/components/layout/MainLayout";
+import CategoryPage from "@/pages/user/CategoryPage";
 import HomePage from "@/pages/user/HomePage";
 import LoginPage from "@/pages/user/LoginPage";
 import RegisterPage from "@/pages/user/RegisterPage";
@@ -21,6 +22,7 @@ function AppRoutes() {
             <Route element={<MainLayout />}>
               <Route path="/home" element={<HomePage />} />
               <Route path="/shop" element={<ShopPage />} />
+              <Route path="/category/:slug" element={<CategoryPage />} />
             </Route>
           </Route>
         </Route>
