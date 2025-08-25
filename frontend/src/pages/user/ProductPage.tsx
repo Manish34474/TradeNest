@@ -114,8 +114,12 @@ export default function ProductPage() {
                 Shop
               </Link>
               <span>/</span>
+              <Link to="/categories" className="hover:text-foreground">
+                Categories
+              </Link>
+              <span>/</span>
               <Link
-                to={`/category/${product.productCategory.slug}`}
+                to={`/categories/${product.productCategory.slug}`}
                 className="hover:text-foreground"
               >
                 {product.productCategory.categoryName}

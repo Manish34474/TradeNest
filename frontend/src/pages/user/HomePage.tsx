@@ -159,7 +159,7 @@ export default function HomePage() {
                   <Card
                     key={index}
                     className="group hover:shadow-lg transition-all duration-300 cursor-pointer border-border hover:border-accent/50"
-                    onClick={() => navigate(`/category/${category.slug}`)}
+                    onClick={() => navigate(`/categories/${category.slug}`)}
                   >
                     <CardContent className="p-0">
                       <div className="relative overflow-hidden rounded-t-lg">
@@ -182,10 +182,7 @@ export default function HomePage() {
                         <p className="text-muted-foreground mb-4">
                           {category.categoryName}
                         </p>
-                        <Button
-                          className="w-full justify-between"
-                          onClick={() => navigate(`/category/${category.slug}`)}
-                        >
+                        <Button className="w-full justify-between">
                           Explore Category
                           <ArrowRight className="h-4 w-4" />
                         </Button>

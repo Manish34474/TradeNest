@@ -1,7 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Slider } from "@/components/ui/slider";
 import { useEffect, useState } from "react";
-import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { isAxiosError } from "axios";
 import { Loading } from "@/components/user/Loading";
@@ -36,8 +34,6 @@ interface Product {
 }
 
 export default function ShopPage() {
-  const [priceRange, setPriceRange] = useState([0, 1000]);
-
   const navigate = useNavigate();
 
   const axiosPrivate = useAxiosPrivate();
@@ -57,19 +53,18 @@ export default function ShopPage() {
 
     const getProducts = async () => {
       try {
+        // get products
         const response = await axiosPrivate.get(
           `/product/all?page=${currentPage}&limit=${limit}`,
           {
             signal: controller.signal,
           }
         );
-        console.log(response.data);
+        setProducts(response.data.products);
 
         setTotalPages(response.data.totalPages);
         setCurrentPage(response.data.currentPage);
         setTotalProducts(response.data.totalProducts);
-
-        setProducts(response.data.products);
       } catch (error) {
         if (isAxiosError(error)) {
           if (error.code === "ERR_CANCELED") {
@@ -112,108 +107,6 @@ export default function ShopPage() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex gap-8">
-          <div className="w-64 flex-shrink-0">
-            {/* Category Filter */}
-            <div className="mb-8">
-              <h3 className="font-semibold text-primary mb-4">
-                Filter By Category
-              </h3>
-              <div className="space-y-3">
-                <div className="flex items-center space-x-2">
-                  <Checkbox id="all-categories" defaultChecked />
-                  <label
-                    htmlFor="all-categories"
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    All Categories
-                  </label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox id="electronics" />
-                  <label
-                    htmlFor="electronics"
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    Electronics
-                  </label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox id="fashion" />
-                  <label
-                    htmlFor="fashion"
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    Fashion
-                  </label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox id="home-garden" />
-                  <label
-                    htmlFor="home-garden"
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    Home & Garden
-                  </label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox id="sports" />
-                  <label
-                    htmlFor="sports"
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    Sports
-                  </label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox id="books" />
-                  <label
-                    htmlFor="books"
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    Books
-                  </label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox id="automotive" />
-                  <label
-                    htmlFor="automotive"
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    Automotive
-                  </label>
-                </div>
-              </div>
-            </div>
-
-            {/* Price Filter */}
-            <div className="mb-8">
-              <h3 className="font-semibold text-primary mb-4">
-                Filter By Price
-              </h3>
-              <div className="space-y-4">
-                <Slider
-                  value={priceRange}
-                  onValueChange={setPriceRange}
-                  max={1000}
-                  min={0}
-                  step={10}
-                  className="w-full"
-                />
-                <div className="flex justify-between text-sm text-muted-foreground">
-                  <span>Price: ${priceRange[0]}</span>
-                  <span>— ${priceRange[1]}</span>
-                </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-full bg-transparent"
-                >
-                  FILTER
-                </Button>
-              </div>
-            </div>
-          </div>
-
           {/* Main Content */}
           <div className="flex-1">
             <div className="flex items-center justify-between mb-6">

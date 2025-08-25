@@ -44,7 +44,7 @@ interface Product {
   stock: number;
 }
 
-export default function ShopPage() {
+export default function CategoryPage() {
   const params = useParams();
   const categorySlug = params.slug;
 
@@ -119,7 +119,17 @@ export default function ShopPage() {
               Shop
             </Link>
             <span className="mx-2">/</span>
-            <Link to={"/shop"} className="text-primary font-medium">
+            <Link
+              to={"/categories"}
+              className="hover:text-primary cursor-pointer"
+            >
+              Categories
+            </Link>
+            <span className="mx-2">/</span>
+            <Link
+              to={`/categories/${categorySlug}`}
+              className="text-primary font-medium"
+            >
               {category?.categoryName}
             </Link>
           </div>
