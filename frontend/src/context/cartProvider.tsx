@@ -102,7 +102,7 @@ export const CartProvider = ({ children }: PropsWithChildren) => {
 
   const removeFromCart = async (productId: string) => {
     try {
-      await axiosPrivate.post("/cart/remove", JSON.stringify({ productId }));
+      await axiosPrivate.put("/cart/delete", JSON.stringify({ productId }));
       await fetchCart();
       toast.success("Product removed from cart");
     } catch (error) {

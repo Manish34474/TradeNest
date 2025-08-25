@@ -19,9 +19,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import useLogout from "@/hooks/useLogout";
 import useCart from "@/hooks/useCart";
+import { useNavigate } from "react-router-dom";
 
 export function Header() {
   const logout = useLogout();
+  const navigate = useNavigate();
 
   const { totalItems, totalPrice } = useCart();
 
@@ -87,10 +89,11 @@ export function Header() {
               variant="ghost"
               size="sm"
               className="relative flex items-center gap-2"
+              onClick={() => navigate("/cart")}
             >
               <ShoppingCart className="h-5 w-5 text-foreground" />
               <span className="text-sm font-medium text-foreground">
-                £{totalPrice}
+                £ {totalPrice}
               </span>
               {/* Cart item count badge */}
               <span className="absolute -top-2 -right-2 bg-accent text-accent-foreground text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
