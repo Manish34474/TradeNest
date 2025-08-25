@@ -49,7 +49,7 @@ export default function Categories() {
 
         setTotalPages(response.data.totalPages);
         setCurrentPage(response.data.currentPage);
-        setTotalProducts(response.data.totalProducts);
+        setTotalProducts(response.data.totalCategories);
       } catch (error) {
         if (isAxiosError(error)) {
           if (error.code === "ERR_CANCELED") {
@@ -104,7 +104,7 @@ export default function Categories() {
             <div className="flex items-center justify-between mb-6">
               <div>
                 <h1 className="text-2xl font-bold text-primary mb-2">
-                  All Products
+                  All Categories
                 </h1>
                 <p className="text-sm text-muted-foreground">
                   Showing 1-{Math.min(limit, totalProducts)} of {totalProducts}{" "}

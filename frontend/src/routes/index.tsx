@@ -6,6 +6,7 @@ import Categories from "@/pages/user/Categories";
 import CategoryPage from "@/pages/user/CategoryPage";
 import HomePage from "@/pages/user/HomePage";
 import LoginPage from "@/pages/user/LoginPage";
+import CheckoutPage from "@/pages/user/CheckoutPage";
 import ProductPage from "@/pages/user/ProductPage";
 import RegisterPage from "@/pages/user/RegisterPage";
 import ShopPage from "@/pages/user/ShopPage";
@@ -26,6 +27,7 @@ function AppRoutes() {
               <Route path="/home" element={<HomePage />} />
               <Route path="/shop" element={<ShopPage />} />
               <Route path="/cart" element={<CartPage />} />
+              <Route path="/checkout" element={<CheckoutPage />} />
               <Route path="/categories" element={<Categories />} />
               <Route path="/categories/:slug" element={<CategoryPage />} />
               <Route path="/product/:slug" element={<ProductPage />} />
