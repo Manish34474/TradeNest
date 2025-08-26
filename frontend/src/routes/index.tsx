@@ -13,6 +13,8 @@ import ShopPage from "@/pages/user/ShopPage";
 import VerifyOtpPage from "@/pages/user/VerifyOtpPage";
 import { Route, Routes } from "react-router-dom";
 import { MyOrdersPage } from "@/pages/user/MyOrdersPage";
+import { AdminDashboard } from "@/pages/admin/AdminDashboard";
+import AdminLayout from "@/components/layout/AdminLayout";
 
 function AppRoutes() {
   return (
@@ -33,6 +35,9 @@ function AppRoutes() {
               <Route path="/categories" element={<Categories />} />
               <Route path="/categories/:slug" element={<CategoryPage />} />
               <Route path="/product/:slug" element={<ProductPage />} />
+            </Route>
+            <Route element={<AdminLayout />}>
+              <Route path="/admin/dashboard" element={<AdminDashboard />} />
             </Route>
           </Route>
         </Route>

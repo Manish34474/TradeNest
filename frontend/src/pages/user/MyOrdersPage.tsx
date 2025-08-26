@@ -16,14 +16,12 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { Package, Calendar, CreditCard, X, Truck, CheckCircle, Clock, XCircle, ShoppingBag, ArrowRight, MapPin } from "lucide-react"
+import { Package, Calendar, CreditCard, X, Truck, CheckCircle, Clock, XCircle, ShoppingBag, ArrowRight } from "lucide-react"
 import useAxiosPrivate from "@/hooks/useAxiosPrivate"
 import { isAxiosError } from "axios"
 import { toast } from "sonner"
 import { Link } from "react-router-dom"
 import { Loading } from "@/components/user/Loading"
-import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@radix-ui/react-dialog"
-import { DialogHeader } from "@/components/ui/dialog"
 
 interface Product {
     _id: string;
@@ -266,10 +264,6 @@ export function MyOrdersPage() {
 
                                             {/* Action Buttons */}
                                             <div className="flex gap-2 pt-4">
-                                                <Button variant="outline" size="sm" className="flex-1 bg-transparent">
-                                                    View Details
-                                                </Button>
-
                                                 {canCancelOrder(order.orderStatus, order.paymentStatus) && (
                                                     <AlertDialog>
                                                         <AlertDialogTrigger asChild>
