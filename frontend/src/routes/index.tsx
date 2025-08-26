@@ -12,6 +12,7 @@ import RegisterPage from "@/pages/user/RegisterPage";
 import ShopPage from "@/pages/user/ShopPage";
 import VerifyOtpPage from "@/pages/user/VerifyOtpPage";
 import { Route, Routes } from "react-router-dom";
+import { MyOrdersPage } from "@/pages/user/MyOrdersPage";
 
 function AppRoutes() {
   return (
@@ -28,6 +29,7 @@ function AppRoutes() {
               <Route path="/shop" element={<ShopPage />} />
               <Route path="/cart" element={<CartPage />} />
               <Route path="/checkout" element={<CheckoutPage />} />
+              <Route path="/myorders" element={<MyOrdersPage />} />
               <Route path="/categories" element={<Categories />} />
               <Route path="/categories/:slug" element={<CategoryPage />} />
               <Route path="/product/:slug" element={<ProductPage />} />

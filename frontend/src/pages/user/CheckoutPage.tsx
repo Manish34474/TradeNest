@@ -44,7 +44,7 @@ export default function CheckoutPage() {
     setIsLoading(true);
 
     try {
-      const address = (((street as string) + city) as string) + "Country";
+      const address = street as string + ", " + city as string + ", " + "England";
 
       await axiosPrivate.post(
         "/order/place",
