@@ -22,7 +22,7 @@ const REGISTER_USER = "/user/register";
 export function RegisterForm() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [pass, setPass] = useState("");
   const [userType, setUserType] = useState("buyer");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -36,7 +36,7 @@ export function RegisterForm() {
     try {
       await axios.post(
         REGISTER_USER,
-        JSON.stringify({ username, email, password, userType }),
+        JSON.stringify({ username, email, pass, userType }),
         {
           headers: { "Content-Type": "application/json" },
         }
@@ -44,7 +44,7 @@ export function RegisterForm() {
 
       setUsername("");
       setEmail("");
-      setPassword("");
+      setPass("");
       setUserType("buyer");
 
       navigate(`/verify/${email}`);
@@ -122,8 +122,8 @@ export function RegisterForm() {
                 id="password"
                 type={showPassword ? "text" : "password"}
                 placeholder="Create a password (min. 6 characters)"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                value={pass}
+                onChange={(e) => setPass(e.target.value)}
                 required
                 className="h-11 pr-10"
               />

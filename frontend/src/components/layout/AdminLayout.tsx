@@ -11,7 +11,7 @@ export default function AdminLayout() {
             {/* sidebar */}
             <Aside sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
             {/* Main Content */}
-            <div className="flex-1 flex flex-col overflow-hidden lg:ml-0">
+            <div className="flex-1 flex flex-col lg:ml-0">
                 {/* Header */}
                 <AdminHeader sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
                 {/* Dashboard Content */}

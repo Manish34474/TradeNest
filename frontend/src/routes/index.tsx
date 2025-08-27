@@ -15,6 +15,7 @@ import { Route, Routes } from "react-router-dom";
 import { MyOrdersPage } from "@/pages/user/MyOrdersPage";
 import { AdminDashboard } from "@/pages/admin/AdminDashboard";
 import AdminLayout from "@/components/layout/AdminLayout";
+import { ProductsPage } from "@/pages/admin/ProductsPage";
 
 function AppRoutes() {
   return (
@@ -38,6 +39,7 @@ function AppRoutes() {
             </Route>
             <Route element={<AdminLayout />}>
               <Route path="/admin/dashboard" element={<AdminDashboard />} />
+              <Route path="/admin/products" element={<ProductsPage />} />
             </Route>
           </Route>
         </Route>
