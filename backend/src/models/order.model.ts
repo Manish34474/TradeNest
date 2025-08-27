@@ -33,7 +33,7 @@ const orderSchema = new mongoose.Schema(
     },
     orderStatus: {
       type: String,
-      enum: ["Pending", "Processing", "Shipped", "Delivery", "Cancelled"],
+      enum: ["Pending", "Processing", "Shipped", "Delivered", "Cancelled"],
       default: "Pending",
     },
     paymentStatus: {
@@ -43,7 +43,7 @@ const orderSchema = new mongoose.Schema(
     },
     paymentMethod: {
       type: String,
-      enum: ["Bank Transfer", "Cash"],
+      enum: ["Card", "Cash"],
       default: "Cash On Delivery",
     },
     currency: {

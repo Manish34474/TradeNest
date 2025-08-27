@@ -14,14 +14,28 @@ async function getAllCategories(req: Request, res: Response) {
     typeof req.query.page === "string" ? parseInt(req.query.page) : 1;
   const limit =
     typeof req.query.limit === "string" ? parseInt(req.query.limit) : 10;
-  const skip = (page - 1) * limit;
 
-  // find categories in database
-  const categories = await categoryModel
-    .find()
-    .sort({ createdAt: -1 })
-    .skip(skip)
-    .limit(limit);
+  let categories;
+  let totalCategories;
+  let totalPages;
+
+  if (limit === 0) {
+    // 👉 return ALL categories (no skip/limit)
+    categories = await categoryModel.find().sort({ createdAt: -1 });
+    totalCategories = categories.length;
+    totalPages = 1; // everything in one page
+  } else {
+    const skip = (page - 1) * limit;
+
+    categories = await categoryModel
+      .find()
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    totalCategories = await categoryModel.countDocuments();
+    totalPages = Math.ceil(totalCategories / limit);
+  }
 
   // if no categories found
   if (categories.length === 0) {
@@ -30,19 +44,16 @@ async function getAllCategories(req: Request, res: Response) {
       message: "No categories found",
       currentPage: page,
       totalPages: 0,
-      totalUsers: 0,
+      totalCategories: 0,
     });
   }
 
-  // if categories found
-  const totalCategories = await categoryModel.countDocuments();
-  const totalPages = Math.ceil(totalCategories / limit);
-
+  // return categories
   return res.status(200).json({
     categories,
     currentPage: page,
-    totalPages: totalPages,
-    totalCategories: totalCategories,
+    totalPages,
+    totalCategories,
   });
 }
 
@@ -199,12 +210,41 @@ async function getCategory(req: Request, res: Response) {
 
   // get one category
   try {
+    // find category
     const category = await categoryModel.findOne({ slug }).exec();
-
     if (!category)
       return res.status(204).json({ message: "Category not found" });
 
-    return res.status(200).json(category);
+    // pagination
+    const page =
+      typeof req.query.page === "string" ? parseInt(req.query.page) : 1;
+    const limit =
+      typeof req.query.limit === "string" ? parseInt(req.query.limit) : 12;
+    const skip = (page - 1) * limit;
+
+    // fetch products under this category
+    const products = await productModel
+      .find({ productCategory: category._id })
+      .populate("productCategory", "categoryName")
+      .populate("seller", "username")
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .exec();
+
+    // count total products
+    const totalProducts = await productModel.countDocuments({
+      productCategory: category._id,
+    });
+    const totalPages = Math.ceil(totalProducts / limit);
+
+    return res.status(200).json({
+      category,
+      products,
+      currentPage: page,
+      totalPages,
+      totalProducts,
+    });
   } catch (error: any) {
     return res.status(500).json({
       message: error.message || "Opps!!! something went wrong. Try again",

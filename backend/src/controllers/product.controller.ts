@@ -6,6 +6,14 @@ import validateFields from "../helpers/validateMissingFields.helper";
 import uploadToCloudinary from "../helpers/uploadToCloudinary.helper";
 import updateDocumentFields from "../helpers/updateDocumentFields.helper";
 
+// extract email from request
+function extractUserId(req: Request) {
+  if (!req.userId) {
+    throw new Error("User Id not found in request");
+  }
+  return req.userId;
+}
+
 // get all products
 async function getAllProducts(req: Request, res: Response) {
   try {
@@ -13,7 +21,7 @@ async function getAllProducts(req: Request, res: Response) {
     const page =
       typeof req.query.page === "string" ? parseInt(req.query.page) : 1;
     const limit =
-      typeof req.query.limit === "string" ? parseInt(req.query.limit) : 10;
+      typeof req.query.limit === "string" ? parseInt(req.query.limit) : 12;
     const skip = (page - 1) * limit;
 
     // fetch products with category and seller info
@@ -53,15 +61,65 @@ async function getAllProducts(req: Request, res: Response) {
   }
 }
 
+// get my products (for seller)
+async function getMyProducts(req: Request, res: Response) {
+  try {
+    const sellerId = extractUserId(req); // get logged in userId (seller)
+
+    // pagination
+    const page =
+      typeof req.query.page === "string" ? parseInt(req.query.page) : 1;
+    const limit =
+      typeof req.query.limit === "string" ? parseInt(req.query.limit) : 12;
+    const skip = (page - 1) * limit;
+
+    // fetch products created by this seller
+    const products = await productModel
+      .find({ seller: sellerId })
+      .populate("productCategory", "categoryName")
+      .populate("seller", "username") // you can also include email etc.
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .exec();
+
+    // count total products of this seller
+    const totalProducts = await productModel.countDocuments({ seller: sellerId });
+    const totalPages = Math.ceil(totalProducts / limit);
+
+    if (products.length === 0) {
+      return res.status(204).json({
+        products: [],
+        message: "You have not added any products yet",
+        currentPage: page,
+        totalPages: totalPages,
+        totalProducts: totalProducts,
+      });
+    }
+
+    return res.status(200).json({
+      products,
+      currentPage: page,
+      totalPages: totalPages,
+      totalProducts: totalProducts,
+    });
+  } catch (error: any) {
+    return res.status(500).json({
+      message: error.message || "Oops!!! something went wrong. Try again",
+    });
+  }
+}
+
 // create product
 async function createProduct(req: Request, res: Response) {
+  const uid = extractUserId(req);
+
   // get fields from body
   const {
     productName,
     alt,
     description,
     productCategory,
-    seller,
     specifications,
     price,
     discount,
@@ -75,7 +133,6 @@ async function createProduct(req: Request, res: Response) {
       alt,
       description,
       productCategory,
-      seller,
       specifications,
       price,
       stock,
@@ -142,7 +199,7 @@ async function createProduct(req: Request, res: Response) {
       productName,
       slug: normalizedSlug,
       productCategory,
-      seller,
+      seller: uid,
       description,
       specifications: parsedSpecs, // array of strings
       price,
@@ -169,7 +226,6 @@ async function updateProduct(req: Request, res: Response) {
     productName,
     description,
     productCategory,
-    seller,
     specifications,
     price,
     discount,
@@ -246,7 +302,6 @@ async function updateProduct(req: Request, res: Response) {
       productName,
       description,
       productCategory,
-      seller,
       discount,
       price,
       stock,
@@ -275,14 +330,14 @@ async function updateProduct(req: Request, res: Response) {
 
 // delete product
 async function deleteProduct(req: Request, res: Response) {
-  const { id } = req.body;
+  const { slug } = req.params;
 
   // validate missing fields
-  const hasError = validateFields({ id }, res);
+  const hasError = validateFields({ slug }, res);
   if (hasError) return;
 
   // check if product exists
-  const product = await productModel.findById(id).exec();
+  const product = await productModel.findOne({ slug }).exec();
   if (!product) return res.status(204).json({ message: "Product not found" });
 
   try {
@@ -292,7 +347,7 @@ async function deleteProduct(req: Request, res: Response) {
     }
 
     // delete product from db
-    await product.deleteOne({ _id: id });
+    await product.deleteOne({ slug: slug });
 
     return res.status(200).json({ message: "Product deleted successfully" });
   } catch (error: any) {
@@ -313,7 +368,7 @@ async function getProduct(req: Request, res: Response) {
   try {
     const product = await productModel
       .findOne({ slug })
-      .populate("productCategory", "categoryName")
+      .populate("productCategory", "categoryName slug")
       .populate("seller", "username")
       .exec();
 
@@ -329,6 +384,7 @@ async function getProduct(req: Request, res: Response) {
 
 export {
   getAllProducts,
+  getMyProducts,
   createProduct,
   updateProduct,
   deleteProduct,

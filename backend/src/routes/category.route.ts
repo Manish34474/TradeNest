@@ -14,7 +14,7 @@ import rolesList from "../config/roleList.config";
 
 const categoryRouter = Router();
 
-categoryRouter.get("/all", catchAsync(getAllCategories));
+categoryRouter.get("/all", verifyJWT, catchAsync(getAllCategories));
 categoryRouter.post(
   "/create",
   verifyJWT,
@@ -35,6 +35,6 @@ categoryRouter.delete(
   verifyRoles(rolesList.admin),
   catchAsync(deleteCategory)
 );
-categoryRouter.get("/:slug", catchAsync(getCategory));
+categoryRouter.get("/:slug", verifyJWT, catchAsync(getCategory));
 
 export default categoryRouter;

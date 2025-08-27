@@ -112,7 +112,7 @@ async function getMyOrders(req: Request, res: Response) {
 
   try {
     // find order
-    const order = await orderModel.findOne({ userId }).populate({
+    const order = await orderModel.find({ userId: userId }).populate({
       path: "orderItems",
       populate: {
         path: "productId",
@@ -130,13 +130,13 @@ async function getMyOrders(req: Request, res: Response) {
     });
 
     // if order is empty
-    if (!order || order.orderItems.length === 0) {
+    if (!order) {
       return res
         .status(200)
         .json({ message: "Looks like you haven't placed an order yet" });
     }
 
-    res.status(200).json({ order });
+    res.status(200).json({ order: order });
   } catch (error: any) {
     return res.status(500).json({
       message: error.message || "Oops!! something went wrong. Try Again.",

@@ -10,6 +10,6 @@ const authRouter = Router();
 
 authRouter.post("/login", catchAsync(handleLogin));
 authRouter.get("/refresh", catchAsync(handleRefresh));
-authRouter.post("/logout", catchAsync(handleLogout));
+authRouter.get("/logout", catchAsync(handleLogout));
 
 export default authRouter;

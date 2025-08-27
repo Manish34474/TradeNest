@@ -13,6 +13,6 @@ const cartRouter = Router();
 cartRouter.get("/all", verifyJWT, catchAsync(getCart));
 cartRouter.post("/add", verifyJWT, catchAsync(addToCart));
 cartRouter.put("/update", verifyJWT, catchAsync(updateCart));
-cartRouter.delete("/delete", verifyJWT, catchAsync(removeFromCart));
+cartRouter.put("/delete", verifyJWT, catchAsync(removeFromCart));
 
 export default cartRouter;

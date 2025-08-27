@@ -5,6 +5,7 @@ import {
   updateProduct,
   deleteProduct,
   getProduct,
+  getMyProducts,
 } from "../controllers/product.controller";
 import catchAsync from "../helpers/catchAsync.helper";
 import { upload } from "../middlewares/multer.middleware";
@@ -14,7 +15,8 @@ import rolesList from "../config/roleList.config";
 
 const productRouter = Router();
 
-productRouter.get("/all", catchAsync(getAllProducts));
+productRouter.get("/all", verifyJWT, catchAsync(getAllProducts));
+productRouter.get("/myproducts", verifyJWT, verifyRoles(rolesList.seller), catchAsync(getMyProducts));
 productRouter.post(
   "/create",
   verifyJWT,
@@ -30,11 +32,11 @@ productRouter.put(
   catchAsync(updateProduct)
 );
 productRouter.delete(
-  "/delete",
+  "/delete/:slug",
   verifyJWT,
   verifyRoles(rolesList.admin, rolesList.seller),
   catchAsync(deleteProduct)
 );
-productRouter.get("/:slug", catchAsync(getProduct));
+productRouter.get("/:slug", verifyJWT, catchAsync(getProduct));
 
 export default productRouter;

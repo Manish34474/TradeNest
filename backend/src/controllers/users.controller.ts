@@ -53,8 +53,7 @@ async function registerUser(req: Request, res: Response) {
 
   // validate email
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const passwordRegex =
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+  const passwordRegex = /^(?=.*\d)(?=.*[#$%&@!])[A-Za-z\d#$%&@!]{8,}$/;
 
   if (!emailRegex.test(email)) {
     return res.status(400).json({
@@ -64,7 +63,7 @@ async function registerUser(req: Request, res: Response) {
   if (!passwordRegex.test(pass)) {
     return res.status(400).json({
       message:
-        "Password must have at least 8 letters and should contain (Capital letter, Small letter, Number, Special Character)",
+        "Password must have at least 8 letters and should contain ( a Number and a Special Character)",
     });
   }
 
