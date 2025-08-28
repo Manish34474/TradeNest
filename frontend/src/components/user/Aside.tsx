@@ -7,18 +7,20 @@ import {
     Home,
     Settings,
     LogOut,
+    PackageOpen,
 } from "lucide-react"
-import { Badge } from "../ui/badge";
+import { Link, useLocation } from "react-router-dom";
 
 
 const sidebarItems = [
-    { icon: Home, label: "Dashboard", active: true },
-    { icon: ShoppingCart, label: "Orders", badge: "12" },
-    { icon: Package, label: "Products" },
-    { icon: Users, label: "Customers" },
-    { icon: Users, label: "Sellers" },
-    { icon: Settings, label: "Settings" },
-    { icon: LogOut, label: "Logout" },
+    { icon: Home, label: "Dashboard", link: "/admin/dashboard" },
+    { icon: ShoppingCart, label: "Orders", link: "/admin/orders" },
+    { icon: PackageOpen, label: "Categories", link: "/admin/categories" },
+    { icon: Package, label: "Products", link: "/admin/products" },
+    { icon: Users, label: "Customers", link: "/admin/customers" },
+    { icon: Users, label: "Sellers", link: "/admin/sellers" },
+    { icon: Settings, label: "Settings", link: "/admin/settings" },
+    { icon: LogOut, label: "Logout", link: "/admin/logout" },
 ]
 
 type AsideProps = {
@@ -41,23 +43,22 @@ export function Aside({ sidebarOpen, setSidebarOpen }: AsideProps) {
 
             <nav className="mt-6 px-3">
                 <ul className="space-y-2">
-                    {sidebarItems.map((item, index) => (
-                        <li key={index}>
-                            <Button
-                                variant={item.active ? "default" : "ghost"}
-                                className={`w-full justify-start gap-3 ${item.active ? "bg-sidebar-primary text-sidebar-primary-foreground" : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"}`}
+                    {sidebarItems.map((item, index) => {
+                        const location = useLocation();
+                        const isActive = location.pathname === item.link ? true : false;
+                        return (
+                            <Link to={item.link} key={index}>
+                                <Button
+                                    variant={isActive ? "default" : "ghost"}
+                                    className={`w-full justify-start gap-3 ${isActive ? "bg-sidebar-primary text-sidebar-primary-foreground" : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"}`}
 
-                            >
-                                <item.icon className="h-4 w-4" />
-                                {item.label}
-                                {item.badge && (
-                                    <Badge className="ml-auto">
-                                        {item.badge}
-                                    </Badge>
-                                )}
-                            </Button>
-                        </li>
-                    ))}
+                                >
+                                    <item.icon className="h-4 w-4" />
+                                    {item.label}
+                                </Button>
+                            </Link>
+                        )
+                    })}
                 </ul>
             </nav>
         </div>

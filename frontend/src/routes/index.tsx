@@ -16,6 +16,9 @@ import { MyOrdersPage } from "@/pages/user/MyOrdersPage";
 import { AdminDashboard } from "@/pages/admin/AdminDashboard";
 import AdminLayout from "@/components/layout/AdminLayout";
 import { ProductsPage } from "@/pages/admin/ProductsPage";
+import { OrdersPage } from "@/pages/admin/OrdersPage";
+import { UsersPage } from "@/pages/admin/UsersPage";
+import { AdminCategoriesPage } from "@/pages/admin/CategoriesPage";
 
 function AppRoutes() {
   return (
@@ -39,7 +42,10 @@ function AppRoutes() {
             </Route>
             <Route element={<AdminLayout />}>
               <Route path="/admin/dashboard" element={<AdminDashboard />} />
+              <Route path="/admin/categories" element={<AdminCategoriesPage />} />
               <Route path="/admin/products" element={<ProductsPage />} />
+              <Route path="/admin/orders" element={<OrdersPage />} />
+              <Route path="/admin/customers" element={<UsersPage />} />
             </Route>
           </Route>
         </Route>

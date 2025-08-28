@@ -1,6 +1,7 @@
-import { Menu, Plus, Search } from "lucide-react";
+import { Menu, Search, User } from "lucide-react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
+import useAuth from "@/hooks/useAuth";
 
 type AsideProps = {
     sidebarOpen: boolean;
@@ -8,6 +9,8 @@ type AsideProps = {
 };
 
 export default function AdminHeader({ setSidebarOpen }: AsideProps) {
+    const { auth } = useAuth();
+
     return (
         <header className="bg-card border-b border-border h-16 flex items-center justify-between px-6">
             <div className="flex items-center gap-4">
@@ -22,9 +25,9 @@ export default function AdminHeader({ setSidebarOpen }: AsideProps) {
             </div>
 
             <div className="flex items-center gap-4">
-                <Button variant="outline" size="sm">
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Product
+                <Button variant="ghost" size="default">
+                    <User className="h-5 w-5 text-foreground" />
+                    <span className="text-sm">{auth.username}</span>
                 </Button>
             </div>
         </header>
