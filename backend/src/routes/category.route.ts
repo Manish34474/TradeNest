@@ -30,7 +30,7 @@ categoryRouter.put(
   catchAsync(updateCategory)
 );
 categoryRouter.delete(
-  "/delete",
+  "/delete/:id",
   verifyJWT,
   verifyRoles(rolesList.admin),
   catchAsync(deleteCategory)

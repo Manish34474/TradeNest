@@ -13,7 +13,7 @@ async function getAllUsers(req: Request, res: Response) {
   const page =
     typeof req.query.page === "string" ? parseInt(req.query.page) : 1;
   const limit =
-    typeof req.query.limit === "string" ? parseInt(req.query.limit) : 10;
+    typeof req.query.limit === "string" ? parseInt(req.query.limit) : 12;
   const skip = (page - 1) * limit;
 
   // find users in database
@@ -199,7 +199,7 @@ async function updateProfile(req: Request, res: Response) {
 // delete user
 async function deleteUser(req: Request, res: Response) {
   // get email from body
-  const { email } = req.body;
+  const { email } = req.params;
 
   // validate missing fields
   const hasError = validateFields({ email }, res);

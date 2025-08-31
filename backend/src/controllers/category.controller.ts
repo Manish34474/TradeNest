@@ -13,7 +13,7 @@ async function getAllCategories(req: Request, res: Response) {
   const page =
     typeof req.query.page === "string" ? parseInt(req.query.page) : 1;
   const limit =
-    typeof req.query.limit === "string" ? parseInt(req.query.limit) : 10;
+    typeof req.query.limit === "string" ? parseInt(req.query.limit) : 12;
 
   let categories;
   let totalCategories;
@@ -165,7 +165,7 @@ async function updateCategory(req: Request, res: Response) {
 
 // delete category
 async function deleteCategory(req: Request, res: Response) {
-  const { id } = req.body;
+  const { id } = req.params;
 
   //   validate missing fields
   const hasError = validateFields({ id }, res);

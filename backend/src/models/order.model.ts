@@ -5,7 +5,7 @@ const orderSchema = new mongoose.Schema(
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      require: true,
+      required: true,
     },
     orderItems: [
       {
@@ -38,7 +38,7 @@ const orderSchema = new mongoose.Schema(
     },
     paymentStatus: {
       type: String,
-      enum: ["Paid", "Pending", "Failed"],
+      enum: ["Paid", "Pending", "Failed", "Refunded"],
       default: "Pending",
     },
     paymentMethod: {

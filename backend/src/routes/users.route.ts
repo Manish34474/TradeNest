@@ -13,10 +13,10 @@ import rolesList from "../config/roleList.config";
 
 const usersRouter = Router();
 
-usersRouter.get("/all", catchAsync(getAllUsers));
+usersRouter.get("/all", verifyJWT, verifyRoles(rolesList.admin), catchAsync(getAllUsers));
 usersRouter.post("/register", catchAsync(registerUser));
 usersRouter.post("/verify", catchAsync(verifyOTP));
 usersRouter.put("/profile", verifyJWT, catchAsync(updateProfile));
-usersRouter.delete("/delete", verifyJWT, catchAsync(deleteUser));
+usersRouter.delete("/delete/:email", verifyJWT, catchAsync(deleteUser));
 
 export default usersRouter;
