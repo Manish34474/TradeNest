@@ -23,6 +23,7 @@ import SellerLayout from "@/components/layout/SellerLayout";
 import { SellerDashboard } from "@/pages/seller/SellerDashboard";
 import { SellerProductsPage } from "@/pages/seller/SellerProductsPage";
 import { SellerOrdersPage } from "@/pages/seller/SellerOrdersPage";
+import NotFound from "@/pages/user/NotFound";
 
 function AppRoutes() {
   return (
@@ -61,6 +62,8 @@ function AppRoutes() {
               <Route path="/seller/orders" element={<SellerOrdersPage />} />
             </Route>
           </Route>
+
+          <Route path="/*" element={<NotFound />} />
         </Route>
       </Routes>
     </div>
