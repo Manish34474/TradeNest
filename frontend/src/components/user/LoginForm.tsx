@@ -51,10 +51,15 @@ export function LoginForm() {
 
       setAuth({ id, username, email: userEmail, roles, accessToken });
 
+
       setEmail("");
       setPass("");
 
-      navigate("/home");
+      roles.includes(747) ?
+        roles.includes(949)
+          ? navigate('/admin/dashboard')
+          : navigate('/home')
+        : navigate('/seller/dashboard');
 
       toast.success(`Welcome, ${username}`);
     } catch (error) {

@@ -32,6 +32,8 @@ export default function CheckoutPage() {
   const [paymentMethod, setPaymentMethod] = useState("Cash");
   const [isLoading, setIsLoading] = useState(false);
 
+  const { fetchCart } = useCart();
+
   const { cart, totalPrice } = useCart();
   const { auth } = useAuth();
   const axiosPrivate = useAxiosPrivate();
@@ -50,9 +52,10 @@ export default function CheckoutPage() {
         "/order/place",
         JSON.stringify({ phoneNumber, address, paymentMethod })
       );
+      await fetchCart();
 
       toast.success("Order Placed Successfully");
-      navigate("/myorder");
+      navigate("/myorders");
     } catch (error) {
       if (isAxiosError(error)) {
         if (!error.response) {

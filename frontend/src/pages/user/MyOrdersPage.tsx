@@ -119,7 +119,7 @@ export function MyOrdersPage() {
 
         const fetchOrder = async () => {
             try {
-                const response = await axiosPrivate.get("/order/myorder");
+                const response = await axiosPrivate.get("/order/myorders");
                 console.log(response.data);
                 setOrders(response.data.order);
             } catch (error) {
@@ -232,10 +232,10 @@ export function MyOrdersPage() {
                                                 {order.orderItems.map((item, index) => (
                                                     <div key={index} className="flex justify-between items-center py-2">
                                                         <div className="flex-1">
-                                                            <p className="font-medium text-foreground">{item.productId.productName}</p>
+                                                            <p className="font-medium text-foreground">{item.productId ? item.productId.productName : "Product Unavailable"}</p>
                                                             <p className="text-sm text-muted-foreground">Quantity: {item.quantity}</p>
                                                         </div>
-                                                        <p className="font-medium text-foreground">${item.productId.actualPrice.toFixed(2)}</p>
+                                                        <p className="font-medium text-foreground">${item.productId ? item.productId.actualPrice.toFixed(2) : "Price Unavailable"}</p>
                                                     </div>
                                                 ))}
                                             </div>

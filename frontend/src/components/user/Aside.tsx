@@ -1,3 +1,4 @@
+import useLogout from "@/hooks/useLogout";
 import { Button } from "../ui/button";
 import {
     Package,
@@ -5,7 +6,6 @@ import {
     Users,
     X,
     Home,
-    Settings,
     LogOut,
     PackageOpen,
 } from "lucide-react"
@@ -17,10 +17,7 @@ const sidebarItems = [
     { icon: ShoppingCart, label: "Orders", link: "/admin/orders" },
     { icon: PackageOpen, label: "Categories", link: "/admin/categories" },
     { icon: Package, label: "Products", link: "/admin/products" },
-    { icon: Users, label: "Customers", link: "/admin/customers" },
-    { icon: Users, label: "Sellers", link: "/admin/sellers" },
-    { icon: Settings, label: "Settings", link: "/admin/settings" },
-    { icon: LogOut, label: "Logout", link: "/admin/logout" },
+    { icon: Users, label: "Users", link: "/admin/users" },
 ]
 
 type AsideProps = {
@@ -29,6 +26,12 @@ type AsideProps = {
 };
 
 export function Aside({ sidebarOpen, setSidebarOpen }: AsideProps) {
+
+    const logout = useLogout();
+
+    const signout = async () => {
+        await logout();
+    };
 
     return (
         <div
@@ -59,6 +62,15 @@ export function Aside({ sidebarOpen, setSidebarOpen }: AsideProps) {
                             </Link>
                         )
                     })}
+                    <Button
+                        variant={"ghost"}
+                        onClick={signout}
+                        className={`w-full justify-start gap-3 ${"text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"}`}
+
+                    >
+                        <LogOut className="h-4 w-4" />
+                        Logout
+                    </Button>
                 </ul>
             </nav>
         </div>

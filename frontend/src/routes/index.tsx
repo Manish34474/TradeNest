@@ -24,14 +24,14 @@ function AppRoutes() {
   return (
     <div>
       <Routes>
-        <Route path="/" element={<LoginPage />} />
+        <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/verify/:email" element={<VerifyOtpPage />} />
 
         <Route element={<PersistLogin />}>
           <Route element={<RequireAuth allowedRoles={[848]} />}>
             <Route element={<MainLayout />}>
-              <Route path="/home" element={<HomePage />} />
+              <Route path="/" element={<HomePage />} />
               <Route path="/shop" element={<ShopPage />} />
               <Route path="/cart" element={<CartPage />} />
               <Route path="/checkout" element={<CheckoutPage />} />
@@ -40,12 +40,14 @@ function AppRoutes() {
               <Route path="/categories/:slug" element={<CategoryPage />} />
               <Route path="/product/:slug" element={<ProductPage />} />
             </Route>
+          </Route>
+          <Route element={<RequireAuth allowedRoles={[949]} />}>
             <Route element={<AdminLayout />}>
               <Route path="/admin/dashboard" element={<AdminDashboard />} />
               <Route path="/admin/categories" element={<AdminCategoriesPage />} />
               <Route path="/admin/products" element={<ProductsPage />} />
               <Route path="/admin/orders" element={<OrdersPage />} />
-              <Route path="/admin/customers" element={<UsersPage />} />
+              <Route path="/admin/users" element={<UsersPage />} />
             </Route>
           </Route>
         </Route>
