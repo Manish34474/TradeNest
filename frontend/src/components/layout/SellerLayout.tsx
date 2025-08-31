@@ -1,19 +1,19 @@
 import { Outlet } from "react-router-dom";
-import AdminHeader from "../user/admin/AdminHeader";
-import { Aside } from "../user/admin/Aside";
 import { useState } from "react";
+import SellerHeader from "../user/seller/SellerHeader";
+import { SellerAside } from "../user/seller/SellerAside";
 
-export default function AdminLayout() {
+export default function SellerLayout() {
     const [sidebarOpen, setSidebarOpen] = useState(false)
 
     return (
         <div className="flex h-screen bg-background">
             {/* sidebar */}
-            <Aside sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+            <SellerAside sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
             {/* Main Content */}
             <div className="flex-1 flex flex-col lg:ml-0">
                 {/* Header */}
-                <AdminHeader sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+                <SellerHeader sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
                 {/* Dashboard Content */}
                 <Outlet />
             </div>

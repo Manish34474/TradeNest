@@ -1,6 +1,6 @@
 import { Menu, Search, User } from "lucide-react";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
+import { Button } from "../../ui/button";
+import { Input } from "../../ui/input";
 import useAuth from "@/hooks/useAuth";
 
 type AsideProps = {
@@ -8,7 +8,7 @@ type AsideProps = {
     setSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export default function AdminHeader({ setSidebarOpen }: AsideProps) {
+export default function SellerHeader({ setSidebarOpen }: AsideProps) {
     const { auth } = useAuth();
 
     return (

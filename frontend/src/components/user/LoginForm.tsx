@@ -55,11 +55,7 @@ export function LoginForm() {
       setEmail("");
       setPass("");
 
-      roles.includes(747) ?
-        roles.includes(949)
-          ? navigate('/admin/dashboard')
-          : navigate('/home')
-        : navigate('/seller/dashboard');
+      roles.include(949) ? navigate('/admin/dashboard') : roles.include(747) ? navigate('/seller/dashboard') : navigate('/');
 
       toast.success(`Welcome, ${username}`);
     } catch (error) {

@@ -48,7 +48,7 @@ const recentOrders = [
     { id: "#3206", customer: "Sofia Davis", email: "sofia.davis@email.com", amount: "$19.99", status: "Shipped" },
 ]
 
-export function AdminDashboard() {
+export function SellerDashboard() {
     return (
         <main className="flex-1 overflow-y-auto p-6">
             <div className="space-y-6">

@@ -1,5 +1,5 @@
 import useLogout from "@/hooks/useLogout";
-import { Button } from "../ui/button";
+import { Button } from "../../ui/button";
 import {
     Package,
     ShoppingCart,

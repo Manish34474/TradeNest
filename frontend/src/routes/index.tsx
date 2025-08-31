@@ -19,6 +19,10 @@ import { ProductsPage } from "@/pages/admin/ProductsPage";
 import { OrdersPage } from "@/pages/admin/OrdersPage";
 import { UsersPage } from "@/pages/admin/UsersPage";
 import { AdminCategoriesPage } from "@/pages/admin/CategoriesPage";
+import SellerLayout from "@/components/layout/SellerLayout";
+import { SellerDashboard } from "@/pages/seller/SellerDashboard";
+import { SellerProductsPage } from "@/pages/seller/SellerProductsPage";
+import { SellerOrdersPage } from "@/pages/seller/SellerOrdersPage";
 
 function AppRoutes() {
   return (
@@ -48,6 +52,13 @@ function AppRoutes() {
               <Route path="/admin/products" element={<ProductsPage />} />
               <Route path="/admin/orders" element={<OrdersPage />} />
               <Route path="/admin/users" element={<UsersPage />} />
+            </Route>
+          </Route>
+          <Route element={<RequireAuth allowedRoles={[747]} />}>
+            <Route element={<SellerLayout />}>
+              <Route path="/seller/dashboard" element={<SellerDashboard />} />
+              <Route path="/seller/products" element={<SellerProductsPage />} />
+              <Route path="/seller/orders" element={<SellerOrdersPage />} />
             </Route>
           </Route>
         </Route>
