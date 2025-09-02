@@ -149,7 +149,7 @@ export default function HomePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {isLoading ? (
               <Loading size="sm" className="col-span-full" />
-            ) : categories.length === 0 ? (
+            ) : categories?.length === 0 || categories === undefined ? (
               <h3 className="text-xl font-semibold text-primary group-hover:text-primary/80 transition-colors duration-300">
                 No Categories Found
               </h3>
@@ -224,9 +224,9 @@ export default function HomePage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {isLoading ? (
               <Loading size="sm" />
-            ) : deals.length === 0 ? (
+            ) : deals?.length === 0 || deals === undefined ? (
               <h3 className="text-xl font-semibold text-primary group-hover:text-primary/80 transition-colors duration-300">
-                No Categories Found
+                No Products Found
               </h3>
             ) : (
               deals.map((product, index) => (
@@ -278,9 +278,9 @@ export default function HomePage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {isLoading ? (
               <Loading size="sm" />
-            ) : topRated.length === 0 ? (
+            ) : topRated?.length === 0 || topRated === undefined ? (
               <h3 className="text-xl font-semibold text-primary group-hover:text-primary/80 transition-colors duration-300">
-                No Categories Found
+                No Products Found
               </h3>
             ) : (
               deals.map((product, index) => (

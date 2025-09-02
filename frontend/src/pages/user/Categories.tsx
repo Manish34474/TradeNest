@@ -135,7 +135,7 @@ export default function Categories() {
             <div className="grid sm:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
               {isLoading ? (
                 <Loading size="sm" className="col-span-full" />
-              ) : categories.length === 0 ? (
+              ) : categories?.length === 0 || categories === undefined ? (
                 <h3 className="text-xl font-semibold text-primary group-hover:text-primary/80 transition-colors duration-300">
                   No Categories Found
                 </h3>

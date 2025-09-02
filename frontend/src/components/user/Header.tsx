@@ -1,14 +1,11 @@
 import {
-  Search,
   ShoppingCart,
   User,
   LogOut,
-  Settings,
   Package,
   UserIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,9 +16,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import useLogout from "@/hooks/useLogout";
 import useCart from "@/hooks/useCart";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import useAuth from "@/hooks/useAuth";
 
 export function Header() {
+
+  const { auth } = useAuth();
+
   const logout = useLogout();
   const navigate = useNavigate();
 
@@ -36,21 +37,9 @@ export function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo/Brand */}
-          <div className="flex-shrink-0">
+          <Link to={'/'} className="flex-shrink-0">
             <h1 className="text-2xl font-bold text-primary">TradeNest</h1>
-          </div>
-
-          {/* Search Bar */}
-          <div className="flex-1 max-w-2xl mx-8">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted h-4 w-4" />
-              <Input
-                type="search"
-                placeholder="Search products, brands, and more..."
-                className="w-full pl-10 pr-4 py-2 bg-input border-border focus:ring-2 focus:ring-ring focus:border-transparent"
-              />
-            </div>
-          </div>
+          </Link>
 
           {/* Right Side Actions */}
           <div className="flex items-center gap-4">
@@ -64,17 +53,21 @@ export function Header() {
               <DropdownMenuContent align="end" className="w-56">
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <UserIcon className="mr-2 h-4 w-4" />
-                  <span>Profile</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
+                {
+                  auth.roles.includes(949) ? <DropdownMenuItem onClick={() => navigate('/admin/dashboard')}>
+                    <UserIcon className="mr-2 h-4 w-4" />
+                    <span>Dashboard</span>
+                  </DropdownMenuItem> : auth.roles.includes(747) ? <DropdownMenuItem onClick={() => navigate('/seller/dashboard')}>
+                    <UserIcon className="mr-2 h-4 w-4" />
+                    <span>Dashboard</span>
+                  </DropdownMenuItem> : <DropdownMenuItem onClick={() => navigate('/profile')}>
+                    <UserIcon className="mr-2 h-4 w-4" />
+                    <span>Profile</span>
+                  </DropdownMenuItem>
+                }
+                <DropdownMenuItem onClick={() => navigate('/myorders')}>
                   <Package className="mr-2 h-4 w-4" />
                   <span>Orders</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Settings className="mr-2 h-4 w-4" />
-                  <span>Settings</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem className="text-red-600" onClick={signout}>

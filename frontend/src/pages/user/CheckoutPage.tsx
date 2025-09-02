@@ -29,7 +29,7 @@ export default function CheckoutPage() {
   const [phoneNumber, setPhoneNumber] = useState<string>();
   const [street, setStreet] = useState<string>();
   const [city, setCity] = useState<string>();
-  const [paymentMethod, setPaymentMethod] = useState("Cash");
+  const [paymentMethod, setPaymentMethod] = useState("Card");
   const [isLoading, setIsLoading] = useState(false);
 
   const { fetchCart } = useCart();
@@ -252,8 +252,8 @@ export default function CheckoutPage() {
                 >
                   <div className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-muted/50">
                     <RadioGroupItem value="Card" id="Card" />
-                    <Label htmlFor="card" className="flex-1 cursor-pointer">
-                      <div className="flex items-center justify-between">
+                    <Label htmlFor="Card" className="flex-1 cursor-pointer">
+                      <div className="flex items-center justify-between gap-2">
                         <span className="font-medium">Credit/Debit Card</span>
                         <div className="flex space-x-2">
                           <Badge variant="outline">Visa</Badge>
@@ -265,38 +265,11 @@ export default function CheckoutPage() {
 
                   <div className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-muted/50">
                     <RadioGroupItem value="Cash" id="Cash" />
-                    <Label htmlFor="cod" className="flex-1 cursor-pointer">
+                    <Label htmlFor="Cash" className="flex-1 cursor-pointer">
                       <span className="font-medium">Cash on Delivery</span>
                     </Label>
                   </div>
                 </RadioGroup>
-
-                {paymentMethod === "Card" && (
-                  <div className="mt-6 space-y-4 p-4 bg-muted rounded-lg">
-                    <div>
-                      <Label htmlFor="cardNumber">Card Number</Label>
-                      <Input
-                        id="cardNumber"
-                        placeholder="1234 5678 9012 3456"
-                        className="h-11"
-                      />
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="expiry">Expiry Date</Label>
-                        <Input
-                          id="expiry"
-                          placeholder="MM/YY"
-                          className="h-11"
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="cvv">CVV</Label>
-                        <Input id="cvv" placeholder="123" className="h-11" />
-                      </div>
-                    </div>
-                  </div>
-                )}
               </CardContent>
             </Card>
           </div>

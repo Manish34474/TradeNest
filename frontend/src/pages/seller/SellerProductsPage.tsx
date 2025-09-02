@@ -125,7 +125,7 @@ export function SellerProductsPage() {
             try {
                 // get products
                 const response = await axiosPrivate.get(
-                    `/product/all?page=${currentPage}&limit=${limit}`,
+                    `/product/myproducts?page=${currentPage}&limit=${limit}`,
                     {
                         signal: controller.signal,
                     }
@@ -179,9 +179,9 @@ export function SellerProductsPage() {
         };
     }, [currentPage, limit, selectedCategory, addUpdate]);
 
-    const filteredProducts = products.filter((product) => {
+    const filteredProducts = products?.filter((product) => {
         const matchesSearch =
-            product.productName.toLowerCase().includes(searchTerm.toLowerCase());
+            product?.productName?.toLowerCase().includes(searchTerm.toLowerCase());
 
         return matchesSearch
     })
@@ -298,17 +298,18 @@ export function SellerProductsPage() {
         }
     }
 
-    const handleDeleteProduct = async (slug: string) => {
+    const handleDeleteProduct = async (id: string) => {
         setDeleting(true);
 
         try {
-            await axiosPrivate.delete(`/product/delete/${slug}`);
+            await axiosPrivate.delete(`/product/delete/${id}`);
             toast.success("Product Deleted Successfully");
 
-            setProducts((prev) => prev.filter((product) => product.slug !== slug));
+            setProducts((prev) => prev.filter((product) => product._id !== id));
 
         } catch (error) {
             if (isAxiosError(error)) {
+                console.log(error);
                 if (error.code === "ERR_CANCELED") {
                     return;
                 } else if (!error.response) {
@@ -316,7 +317,7 @@ export function SellerProductsPage() {
                 } else if (error.response.status === 401) {
                     toast.error("Unauthorized");
                 } else if (error.response.status === 400) {
-                    toast.error(error.message);
+                    toast.error(error.response.data.message);
                 } else {
                     toast.error(error.message);
                 }
@@ -452,7 +453,7 @@ export function SellerProductsPage() {
                                     </SelectTrigger>
                                     <SelectContent>
                                         {
-                                            categories.map((cat, index) => {
+                                            categories?.map((cat, index) => {
                                                 return (
                                                     <SelectItem key={index} value={cat._id}>{cat.categoryName}</SelectItem>
                                                 )
@@ -609,9 +610,9 @@ export function SellerProductsPage() {
                         <Package className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{products.length}</div>
+                        <div className="text-2xl font-bold">{products?.length}</div>
                         <p className="text-xs text-muted-foreground">
-                            {filteredProducts.length !== products.length && `${filteredProducts.length} filtered`}
+                            {filteredProducts?.length !== products?.length && `${filteredProducts.length} filtered`}
                         </p>
                     </CardContent>
                 </Card>
@@ -621,7 +622,7 @@ export function SellerProductsPage() {
                         <TrendingUp className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{products.filter((p) => p.stock <= 5).length}</div>
+                        <div className="text-2xl font-bold">{products?.filter((p) => p.stock <= 5).length}</div>
                         <p className="text-xs text-muted-foreground">Items with 5 or less in stock</p>
                     </CardContent>
                 </Card>
@@ -631,7 +632,7 @@ export function SellerProductsPage() {
                         <BarChart3 className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{categories.length}</div>
+                        <div className="text-2xl font-bold">{categories?.length}</div>
                         <p className="text-xs text-muted-foreground">Product categories</p>
                     </CardContent>
                 </Card>
@@ -664,7 +665,7 @@ export function SellerProductsPage() {
                         <SelectItem value={"all"}>
                             All Categories
                         </SelectItem>
-                        {categories.map((category, index) => (
+                        {categories?.map((category, index) => (
                             <SelectItem key={index} value={category.slug}>
                                 {category.categoryName}
                             </SelectItem>
@@ -699,7 +700,7 @@ export function SellerProductsPage() {
             </div>
 
             {isLoading === true ? <Loading size="lg" /> :
-                filteredProducts.length === 0 ? (
+                filteredProducts?.length === 0 || filteredProducts === undefined ? (
                     <Card className="p-8 text-center">
                         <Package className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
                         <h3 className="text-lg font-semibold mb-2">No products found</h3>
@@ -708,16 +709,10 @@ export function SellerProductsPage() {
                                 ? "Try adjusting your search or filter criteria."
                                 : "Get started by adding your first product."}
                         </p>
-                        {!searchTerm && selectedCategory === "all" && (
-                            <Button onClick={() => resetForm()}>
-                                <Plus className="h-4 w-4 mr-2" />
-                                Add Your First Product
-                            </Button>
-                        )}
                     </Card>
                 ) : (
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                        {filteredProducts.map((product, index) => (
+                        {filteredProducts?.map((product, index) => (
                             <Card key={index} className="overflow-hidden hover:shadow-md transition-shadow">
                                 <div className="aspect-square relative">
                                     <img
@@ -766,7 +761,7 @@ export function SellerProductsPage() {
                                         <Button
                                             size="sm"
                                             variant="outline"
-                                            onClick={() => handleDeleteProduct(product.slug)}
+                                            onClick={() => handleDeleteProduct(product._id)}
                                             className="flex-1 hover:bg-destructive hover:text-destructive-foreground"
                                             disabled={deleting}
                                         >

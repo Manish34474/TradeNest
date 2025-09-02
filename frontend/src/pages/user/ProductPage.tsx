@@ -41,7 +41,7 @@ interface Product {
 export default function ProductPage() {
   const axiosPrivate = useAxiosPrivate();
 
-  const { updateCart } = useCart();
+  const { addToCart } = useCart();
 
   const params = useParams();
   const productSlug = params.slug as string;
@@ -83,18 +83,6 @@ export default function ProductPage() {
     };
   }, [params]);
 
-  //   const nextImage = () => {
-  //     setSelectedImageIndex((prev) => (prev + 1) % product.image.imageURL.length);
-  //   };
-
-  //   const prevImage = () => {
-  //     setSelectedImageIndex(
-  //       (prev) =>
-  //         (prev - 1 + product.image.imageURL.length) %
-  //         product.image.imageURL.length
-  //     );
-  //   };
-
   return (
     <div className="min-h-screen bg-background">
       {isLoading ? (
@@ -106,7 +94,7 @@ export default function ProductPage() {
           {/* Breadcrubm */}
           <div className="container mx-auto px-4 py-4">
             <nav className="flex items-center space-x-2 text-sm text-muted-foreground">
-              <Link to="/home" className="hover:text-foreground">
+              <Link to="/" className="hover:text-foreground">
                 Home
               </Link>
               <span>/</span>
@@ -149,40 +137,7 @@ export default function ProductPage() {
                   <Badge className="absolute top-4 right-4 bg-primary">
                     HOT
                   </Badge>
-
-                  {/* Image Navigation */}
-                  {/* {product.image.imageURL.length > 1 && (
-                <>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white"
-                    onClick={prevImage}
-                  >
-                    <ChevronLeft className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white"
-                    onClick={nextImage}
-                  >
-                    <ChevronRight className="h-4 w-4" />
-                  </Button>
-                </>
-              )} */}
                 </div>
-
-                {/* Thumbnail Images */}
-                {/* <div className="flex gap-2 overflow-x-auto">
-              <img
-                src={product.image.imageURL || "/placeholder.svg"}
-                alt={product.alt}
-                width={80}
-                height={80}
-                className="object-cover w-full h-full"
-              />
-            </div> */}
               </div>
 
               {/* Product Info */}
@@ -191,18 +146,6 @@ export default function ProductPage() {
                   <h1 className="text-3xl font-bold mb-2">
                     {product.productName}
                   </h1>
-                  {/* <div className="flex items-center gap-4 mb-4">
-                <div className="flex items-center gap-2">
-                  <StarRating rating={product.rating} size="md" />
-                  <span className="text-sm text-muted-foreground">
-                    ({product.reviews} reviews)
-                  </span>
-                </div>
-                <span className="text-sm text-muted-foreground">
-                  SKU: {product.sku}
-                </span>
-              </div> */}
-
                   <div className="flex items-center gap-3 mb-4">
                     <span className="text-3xl font-bold text-primary">
                       £{product.actualPrice.toLocaleString()}
@@ -283,7 +226,7 @@ export default function ProductPage() {
                       className="flex-1 w-max"
                       size="lg"
                       disabled={product.stock > 0 ? false : true}
-                      onClick={() => updateCart(product._id, quantity)}
+                      onClick={() => addToCart(product._id)}
                     >
                       <ShoppingCart className="w-5 h-5 mr-2" />
                       Add to Cart

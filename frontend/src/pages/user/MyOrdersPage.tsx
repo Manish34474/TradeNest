@@ -86,15 +86,15 @@ const getStatusIcon = (status: string) => {
 
 const getStatusVariant = (status: string) => {
     switch (status) {
-        case "pending":
+        case "Pending":
             return "secondary"
-        case "processing":
+        case "Processing":
             return "default"
-        case "shipped":
+        case "Shipped":
             return "default"
-        case "delivered":
+        case "Delivered":
             return "default"
-        case "cancelled":
+        case "Cancelled":
             return "destructive"
         default:
             return "secondary"
@@ -144,13 +144,22 @@ export function MyOrdersPage() {
         };
     }, [])
 
-    // const handleCancelOrder = (orderId: string) => {
-    //     setOrders((prevOrders) =>
-    //         prevOrders.map((order) =>
-    //             order.id === orderId ? { ...order, status: "cancelled", paymentStatus: "refunded" } : order,
-    //         ),
-    //     )
-    // }
+    const handleCancelOrder = async (orderId: string) => {
+        try {
+            await axiosPrivate.put(`/order/update`, JSON.stringify({ orderId: orderId, orderStatus: "Cancelled" }));
+            toast.success('Order status updated successfully');
+        } catch (error) {
+            if (isAxiosError(error)) {
+                if (!error.response) {
+                    toast.error("No Server Response");
+                } else if (error.response.status === 401) {
+                    toast.error("Unauthorized");
+                } else {
+                    toast.error("Oops!!! Something went wrong. Try again");
+                }
+            }
+        }
+    }
 
     if (orders === undefined || orders === null || orders.length === 0) {
         return (
@@ -159,7 +168,7 @@ export function MyOrdersPage() {
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="flex items-center text-sm text-muted-foreground">
                             <Link
-                                to="/home"
+                                to="/"
                                 className="hover:text-foreground cursor-pointer transition-colors"
                             >
                                 Home
@@ -285,7 +294,7 @@ export function MyOrdersPage() {
                                                             <AlertDialogFooter>
                                                                 <AlertDialogCancel>Keep Order</AlertDialogCancel>
                                                                 <AlertDialogAction
-                                                                    // onClick={() => handleCancelOrder(order.id)}
+                                                                    onClick={() => handleCancelOrder(order._id)}
                                                                     className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                                                                 >
                                                                     Cancel Order

@@ -8,6 +8,7 @@ import {
     Home,
     LogOut,
     PackageOpen,
+    ShoppingBag,
 } from "lucide-react"
 import { Link, useLocation } from "react-router-dom";
 
@@ -18,6 +19,7 @@ const sidebarItems = [
     { icon: PackageOpen, label: "Categories", link: "/admin/categories" },
     { icon: Package, label: "Products", link: "/admin/products" },
     { icon: Users, label: "Users", link: "/admin/users" },
+    { icon: ShoppingBag, label: "Shop", link: "/" },
 ]
 
 type AsideProps = {

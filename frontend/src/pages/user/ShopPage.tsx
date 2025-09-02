@@ -143,7 +143,7 @@ export default function ShopPage() {
             <div className="grid sm:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
               {isLoading ? (
                 <Loading size="lg" className="col-span-full" />
-              ) : products.length === 0 ? (
+              ) : products?.length === 0 || products === undefined ? (
                 <h3 className="text-xl font-semibold text-primary group-hover:text-primary/80 transition-colors duration-300">
                   No Categories Found
                 </h3>

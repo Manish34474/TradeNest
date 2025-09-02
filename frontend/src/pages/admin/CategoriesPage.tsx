@@ -61,7 +61,6 @@ export function AdminCategoriesPage() {
     const [isAddProductOpen, setIsAddProductOpen] = useState(false)
     const [editingProduct, setEditingProduct] = useState<Category | null>(null);
     const [searchTerm, setSearchTerm] = useState("")
-    const [selectedCategory, setSelectedCategory] = useState("all")
     const [categoryForm, setCategoryForm] = useState<CategoryForm>({
         image: "",
         alt: "",
@@ -111,14 +110,18 @@ export function AdminCategoriesPage() {
         return () => {
             controller.abort();
         };
-    }, [currentPage, limit, selectedCategory, addUpdate]);
+    }, [currentPage, limit, addUpdate]);
 
-    const filteredCategories = categories.filter((category) => {
-        const matchesSearch =
-            category.categoryName.toLowerCase().includes(searchTerm.toLowerCase());
+    let filteredCategories: Category[] = [];
 
-        return matchesSearch
-    })
+    if (categories !== undefined) {
+        filteredCategories = categories.filter((category) => {
+            const matchesSearch =
+                category.categoryName.toLowerCase().includes(searchTerm.toLowerCase());
+
+            return matchesSearch
+        })
+    }
 
     const handleAddProduct = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -220,9 +223,7 @@ export function AdminCategoriesPage() {
 
         } catch (error) {
             if (isAxiosError(error)) {
-                if (error.code === "ERR_CANCELED") {
-                    return;
-                } else if (!error.response) {
+                if (!error.response) {
                     toast.error("No Server Response");
                 } else if (error.response.status === 401) {
                     toast.error("Unauthorized");
@@ -374,7 +375,7 @@ export function AdminCategoriesPage() {
                         <BarChart3 className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{categories.length}</div>
+                        <div className="text-2xl font-bold">{categories?.length}</div>
                         <p className="text-xs text-muted-foreground">Categories</p>
                     </CardContent>
                 </Card>
@@ -393,27 +394,6 @@ export function AdminCategoriesPage() {
                         className="pl-10"
                     />
                 </div>
-                <Select
-                    value={selectedCategory}
-                    onValueChange={(value) => {
-                        setSelectedCategory(value)
-                        setCurrentPage(1)
-                    }}
-                >
-                    <SelectTrigger className="w-full sm:w-48">
-                        <SelectValue placeholder="All Categories" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value={"all"}>
-                            All Categories
-                        </SelectItem>
-                        {categories.map((category, index) => (
-                            <SelectItem key={index} value={category.slug}>
-                                {category.categoryName}
-                            </SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
             </div>
 
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -447,16 +427,10 @@ export function AdminCategoriesPage() {
                         <Package className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
                         <h3 className="text-lg font-semibold mb-2">No Category found</h3>
                         <p className="text-muted-foreground mb-4">
-                            {searchTerm || selectedCategory !== "all"
+                            {searchTerm !== "all"
                                 ? "Try adjusting your search or filter criteria."
                                 : "Get started by adding your first Category."}
                         </p>
-                        {!searchTerm && selectedCategory === "all" && (
-                            <Button onClick={() => resetForm()}>
-                                <Plus className="h-4 w-4 mr-2" />
-                                Add Your First Category
-                            </Button>
-                        )}
                     </Card>
                 ) : (
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">

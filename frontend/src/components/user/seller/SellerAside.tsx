@@ -6,6 +6,7 @@ import {
     X,
     Home,
     LogOut,
+    ShoppingBag,
 } from "lucide-react"
 import { Link, useLocation } from "react-router-dom";
 
@@ -14,6 +15,7 @@ const sidebarItems = [
     { icon: Home, label: "Dashboard", link: "/seller/dashboard" },
     { icon: ShoppingCart, label: "Orders", link: "/seller/orders" },
     { icon: Package, label: "Products", link: "/seller/products" },
+    { icon: ShoppingBag, label: "Shop", link: "/" },
 ]
 
 type AsideProps = {

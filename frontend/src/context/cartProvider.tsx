@@ -76,11 +76,10 @@ export const CartProvider = ({ children }: PropsWithChildren) => {
 
   const totalItems =
     cart?.cartItem.reduce((acc, item) => acc + item.quantity, 0) || 0;
-  const totalPrice =
-    cart?.cartItem.reduce(
-      (acc, item) => acc + item.productId.actualPrice * item.quantity,
-      0
-    ) || 0;
+  const totalPrice = cart?.cartItem.reduce(
+    (acc, item) => acc + item.productId.actualPrice * item.quantity,
+    0
+  ) || 0;
 
   const addToCart = async (productId: string) => {
     try {

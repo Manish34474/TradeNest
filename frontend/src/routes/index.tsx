@@ -24,6 +24,7 @@ import { SellerDashboard } from "@/pages/seller/SellerDashboard";
 import { SellerProductsPage } from "@/pages/seller/SellerProductsPage";
 import { SellerOrdersPage } from "@/pages/seller/SellerOrdersPage";
 import NotFound from "@/pages/user/NotFound";
+import ProfilePage from "@/pages/user/ProfilePage";
 
 function AppRoutes() {
   return (
@@ -37,8 +38,10 @@ function AppRoutes() {
           <Route element={<RequireAuth allowedRoles={[848]} />}>
             <Route element={<MainLayout />}>
               <Route path="/" element={<HomePage />} />
+              <Route path="/home" element={<HomePage />} />
               <Route path="/shop" element={<ShopPage />} />
               <Route path="/cart" element={<CartPage />} />
+              <Route path="/profile" element={<ProfilePage />} />
               <Route path="/checkout" element={<CheckoutPage />} />
               <Route path="/myorders" element={<MyOrdersPage />} />
               <Route path="/categories" element={<Categories />} />
