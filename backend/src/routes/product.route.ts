@@ -32,7 +32,7 @@ productRouter.put(
   catchAsync(updateProduct)
 );
 productRouter.delete(
-  "/delete/:slug",
+  "/delete/:id",
   verifyJWT,
   verifyRoles(rolesList.admin, rolesList.seller),
   catchAsync(deleteProduct)

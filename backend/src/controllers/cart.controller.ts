@@ -60,7 +60,7 @@ async function addToCart(req: Request, res: Response) {
   const userId = extractUserId(req);
 
   // get product id from body
-  const { productId } = req.body;
+  const { productId, quantity } = req.body;
 
   // validate missing fields
   const hasError = validateFields({ productId }, res);
@@ -77,6 +77,7 @@ async function addToCart(req: Request, res: Response) {
     const existingCartItem = await cartItemModel.findOne({
       cartId: cart._id,
       productId,
+      quantity
     });
 
     if (!existingCartItem) {

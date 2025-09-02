@@ -5,6 +5,8 @@ import deleteFromCloudinary from "../helpers/deleteFromCloudinary";
 import validateFields from "../helpers/validateMissingFields.helper";
 import uploadToCloudinary from "../helpers/uploadToCloudinary.helper";
 import updateDocumentFields from "../helpers/updateDocumentFields.helper";
+import cartItemModel from "../models/cartItem.model";
+import orderItemModel from "../models/orderItem.model";
 
 // extract email from request
 function extractUserId(req: Request) {
@@ -330,15 +332,21 @@ async function updateProduct(req: Request, res: Response) {
 
 // delete product
 async function deleteProduct(req: Request, res: Response) {
-  const { slug } = req.params;
+  const { id } = req.params;
 
   // validate missing fields
-  const hasError = validateFields({ slug }, res);
+  const hasError = validateFields({ id }, res);
   if (hasError) return;
 
   // check if product exists
-  const product = await productModel.findOne({ slug }).exec();
+  const product = await productModel.findOne({ _id: id }).exec();
   if (!product) return res.status(204).json({ message: "Product not found" });
+
+  const cartItem = await cartItemModel.findOne({ productId: id }).exec();
+  if (cartItem) return res.status(400).json({ message: "Cannot delete item, as it already exists in a cart" })
+
+  const orderItem = await orderItemModel.findOne({ productId: id }).exec();
+  if (orderItem) return res.status(400).json({ message: "Cannot delete item, as it already exists in a order" })
 
   try {
     // delete product image from cloudinary (if exists)
@@ -347,7 +355,7 @@ async function deleteProduct(req: Request, res: Response) {
     }
 
     // delete product from db
-    await product.deleteOne({ slug: slug });
+    await productModel.deleteOne({ _id: id });
 
     return res.status(200).json({ message: "Product deleted successfully" });
   } catch (error: any) {

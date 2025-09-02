@@ -172,7 +172,7 @@ async function deleteCategory(req: Request, res: Response) {
   if (hasError) return;
 
   // check if product exists under the category
-  const product = await productModel.find({ productCategory: id });
+  const product = await productModel.findOne({ productCategory: id });
 
   if (product) {
     return res.status(400).json({

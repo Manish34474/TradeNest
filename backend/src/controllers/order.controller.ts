@@ -5,6 +5,8 @@ import orderModel from "../models/order.model";
 import orderItemModel from "../models/orderItem.model";
 import validateFields from "../helpers/validateMissingFields.helper";
 import updateDocumentFields from "../helpers/updateDocumentFields.helper";
+import userModel from "../models/user.model";
+import productModel from "../models/product.model";
 
 // extract email from request
 function extractUserId(req: Request) {
@@ -277,4 +279,67 @@ async function deleteOrder(req: Request, res: Response) {
   }
 }
 
-export { placeOrderFromCart, getMyOrders, getSellerOrders, updateOrderStatus, deleteOrder };
+// stats
+async function getStats(req: Request, res: Response) {
+  try {
+    const userId = extractUserId(req);
+
+    if (!userId) {
+      return res.status(400).json({ message: "User/Seller ID is required" });
+    }
+
+    const revenueAgg = await orderModel.aggregate([
+      {
+        $lookup: {
+          from: "orderitems",
+          localField: "orderItems",
+          foreignField: "_id",
+          as: "orderItems",
+        },
+      },
+      { $unwind: "$orderItems" },
+      {
+        $lookup: {
+          from: "products",
+          localField: "orderItems.productId",
+          foreignField: "_id",
+          as: "product",
+        },
+      },
+      { $unwind: "$product" },
+      { $match: { "product.seller": userId } },
+      {
+        $group: {
+          _id: null,
+          totalRevenue: { $sum: "$orderItems.totalPrice" },
+        },
+      },
+    ]);
+
+    const totalRevenue =
+      revenueAgg.length > 0 ? revenueAgg[0].totalRevenue : 0;
+
+    const totalActiveUsers = await userModel.countDocuments();
+
+    const totalOrders = await orderModel.countDocuments({
+      "orderItems.productId": { $ne: null },
+    });
+
+    const totalProducts = await productModel.countDocuments({
+      seller: userId,
+    });
+
+    return res.status(200).json({
+      totalRevenue,
+      totalActiveUsers,
+      totalOrders,
+      totalProducts,
+    });
+  } catch (error: any) {
+    return res.status(500).json({
+      message: error.message || "Oops!! Something went wrong. Try again.",
+    });
+  }
+}
+
+export { placeOrderFromCart, getMyOrders, getSellerOrders, updateOrderStatus, deleteOrder, getStats };
