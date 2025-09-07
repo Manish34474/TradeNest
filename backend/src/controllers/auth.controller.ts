@@ -20,7 +20,7 @@ async function handleLogin(req: Request, res: Response) {
 
   // check for user in database
   const user = await userModel.findOne({ email: email }).exec();
-  if (!user) return res.status(204).json({ message: "User not found" });
+  if (!user) return res.status(400).json({ message: "User not found" });
 
   //   compare password and send jwt if password matches
   const match = await bcrypt.compare(pass, user.password ?? "");

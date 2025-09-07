@@ -39,6 +39,7 @@ import { isAxiosError } from "axios"
 import { toast } from "sonner"
 import useAxiosPrivate from "@/hooks/useAxiosPrivate"
 import useAuth from "@/hooks/useAuth"
+import { Loading } from "@/components/user/Loading"
 
 interface Product {
     _id: string;
@@ -144,7 +145,7 @@ export function OrdersPage() {
         return () => {
             controller.abort();
         };
-    }, [limit, currentPage, isLoading])
+    }, [limit, currentPage]);
 
     const handleViewOrder = (order: Order) => {
         setSelectedOrder(order)
@@ -343,75 +344,83 @@ export function OrdersPage() {
                                     <TableHead className="text-right">Actions</TableHead>
                                 </TableRow>
                             </TableHeader>
-                            <TableBody>
-                                {orders.length === 0 ? (
+                            {
+                                isLoading ?
                                     <TableRow>
-                                        <TableCell colSpan={9} className="text-center py-8">
-                                            <div className="flex flex-col items-center space-y-2">
-                                                <Package className="h-8 w-8 text-muted-foreground" />
-                                                <p className="text-muted-foreground">No orders found</p>
-                                            </div>
+                                        <TableCell colSpan={1} className="text-center py-8">
+                                            <Loading />
                                         </TableCell>
-                                    </TableRow>
-                                ) : (
-                                    orders.map((order, index) => (
-                                        <TableRow key={index}>
-                                            <TableCell className="font-medium">{order._id}</TableCell>
-                                            <TableCell>
-                                                <div className="flex items-center space-x-3">
-                                                    <div>
-                                                        <p className="text-sm font-medium">{order.userId ? order.userId.username : "User Not Available"}</p>
-                                                        <p className="text-xs text-muted-foreground">{order.userId ? order.userId.email : "Email not available"}</p>
+                                    </TableRow> :
+                                    <TableBody>
+                                        {orders.length === 0 ? (
+                                            <TableRow>
+                                                <TableCell colSpan={9} className="text-center py-8">
+                                                    <div className="flex flex-col items-center space-y-2">
+                                                        <Package className="h-8 w-8 text-muted-foreground" />
+                                                        <p className="text-muted-foreground">No orders found</p>
                                                     </div>
-                                                </div>
-                                            </TableCell>
-                                            <TableCell>
-                                                <div>
-                                                    <p className="text-sm font-medium">{auth.username}</p>
-                                                    <p className="text-xs text-muted-foreground">{auth.email}</p>
-                                                </div>
-                                            </TableCell>
-                                            <TableCell className="font-medium">${order.totalAmount.toFixed(2)}</TableCell>
-                                            <TableCell>
-                                                <Badge variant={getStatusBadgeVariant(order.orderStatus, "order")}>{order.orderStatus}</Badge>
-                                            </TableCell>
-                                            <TableCell>
-                                                <Badge variant={getStatusBadgeVariant(order.paymentStatus, "payment")}>
-                                                    {order.paymentStatus}
-                                                </Badge>
-                                            </TableCell>
-                                            <TableCell className="text-sm text-muted-foreground">
-                                                {new Date(order.orderDate).toLocaleDateString()}
-                                            </TableCell>
-                                            <TableCell className="text-right">
-                                                <DropdownMenu>
-                                                    <DropdownMenuTrigger asChild>
-                                                        <Button variant="ghost" className="h-8 w-8 p-0">
-                                                            <MoreHorizontal className="h-4 w-4" />
-                                                        </Button>
-                                                    </DropdownMenuTrigger>
-                                                    <DropdownMenuContent align="end">
-                                                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                                        <DropdownMenuItem onClick={() => handleViewOrder(order)}>
-                                                            <Eye className="mr-2 h-4 w-4" />
-                                                            View Details
-                                                        </DropdownMenuItem>
-                                                        <DropdownMenuItem onClick={() => handleEditOrder(order)}>
-                                                            <Edit className="mr-2 h-4 w-4" />
-                                                            Edit Status
-                                                        </DropdownMenuItem>
-                                                        <DropdownMenuSeparator />
-                                                        <DropdownMenuItem onClick={() => handleDeleteOrder(order._id)} className="text-destructive">
-                                                            <Trash2 className="mr-2 h-4 w-4" />
-                                                            Delete Order
-                                                        </DropdownMenuItem>
-                                                    </DropdownMenuContent>
-                                                </DropdownMenu>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))
-                                )}
-                            </TableBody>
+                                                </TableCell>
+                                            </TableRow>
+                                        ) : (
+                                            orders.map((order, index) => (
+                                                <TableRow key={index}>
+                                                    <TableCell className="font-medium">{order._id}</TableCell>
+                                                    <TableCell>
+                                                        <div className="flex items-center space-x-3">
+                                                            <div>
+                                                                <p className="text-sm font-medium">{order.userId ? order.userId.username : "User Not Available"}</p>
+                                                                <p className="text-xs text-muted-foreground">{order.userId ? order.userId.email : "Email not available"}</p>
+                                                            </div>
+                                                        </div>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <div>
+                                                            <p className="text-sm font-medium">{auth.username}</p>
+                                                            <p className="text-xs text-muted-foreground">{auth.email}</p>
+                                                        </div>
+                                                    </TableCell>
+                                                    <TableCell className="font-medium">${order.totalAmount.toFixed(2)}</TableCell>
+                                                    <TableCell>
+                                                        <Badge variant={getStatusBadgeVariant(order.orderStatus, "order")}>{order.orderStatus}</Badge>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <Badge variant={getStatusBadgeVariant(order.paymentStatus, "payment")}>
+                                                            {order.paymentStatus}
+                                                        </Badge>
+                                                    </TableCell>
+                                                    <TableCell className="text-sm text-muted-foreground">
+                                                        {new Date(order.orderDate).toLocaleDateString()}
+                                                    </TableCell>
+                                                    <TableCell className="text-right">
+                                                        <DropdownMenu>
+                                                            <DropdownMenuTrigger asChild>
+                                                                <Button variant="ghost" className="h-8 w-8 p-0">
+                                                                    <MoreHorizontal className="h-4 w-4" />
+                                                                </Button>
+                                                            </DropdownMenuTrigger>
+                                                            <DropdownMenuContent align="end">
+                                                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                                                <DropdownMenuItem onClick={() => handleViewOrder(order)}>
+                                                                    <Eye className="mr-2 h-4 w-4" />
+                                                                    View Details
+                                                                </DropdownMenuItem>
+                                                                <DropdownMenuItem onClick={() => handleEditOrder(order)}>
+                                                                    <Edit className="mr-2 h-4 w-4" />
+                                                                    Edit Status
+                                                                </DropdownMenuItem>
+                                                                <DropdownMenuSeparator />
+                                                                <DropdownMenuItem onClick={() => handleDeleteOrder(order._id)} className="text-destructive">
+                                                                    <Trash2 className="mr-2 h-4 w-4" />
+                                                                    Delete Order
+                                                                </DropdownMenuItem>
+                                                            </DropdownMenuContent>
+                                                        </DropdownMenu>
+                                                    </TableCell>
+                                                </TableRow>
+                                            ))
+                                        )}
+                                    </TableBody>
+                            }
                         </Table>
                     </div>
 
