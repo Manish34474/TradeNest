@@ -6,12 +6,14 @@ import {
   updateOrderStatus,
   deleteOrder,
   getStats,
+  getAllOrders,
 } from "../controllers/order.controller";
 import catchAsync from "../helpers/catchAsync.helper";
 import { verifyJWT } from "../middlewares/verifyJWT.middlware";
 
 const orderRoute = Router();
 
+orderRoute.get("/all", verifyJWT, catchAsync(getAllOrders));
 orderRoute.get("/myorders", verifyJWT, catchAsync(getMyOrders));
 orderRoute.get("/orders", verifyJWT, catchAsync(getSellerOrders));
 orderRoute.get("/stats", verifyJWT, catchAsync(getStats));

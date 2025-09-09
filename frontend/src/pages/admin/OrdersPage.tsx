@@ -118,7 +118,7 @@ export function OrdersPage() {
 
         const fetchOrder = async () => {
             try {
-                const response = await axiosPrivate.get(`/order/orders?page=${currentPage}&limit=${limit}`);
+                const response = await axiosPrivate.get(`/order/all?page=${currentPage}&limit=${limit}`);
                 console.log(response.data.orders);
                 setOrders(response.data.orders);
                 setTotalPages(response.data.totalPages);

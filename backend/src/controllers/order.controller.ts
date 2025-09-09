@@ -222,6 +222,71 @@ async function getSellerOrders(req: Request, res: Response) {
   }
 }
 
+
+// get seller orders
+async function getAllOrders(req: Request, res: Response) {
+  // page number and limit for pagination
+  const page =
+    typeof req.query.page === "string" ? parseInt(req.query.page) : 1;
+  const limit =
+    typeof req.query.limit === "string" ? parseInt(req.query.limit) : 10;
+  const skip = (page - 1) * limit;
+
+  try {
+    const orders = await orderModel
+      .find()
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .populate({
+        path: "userId",
+        select: "username email",
+      })
+      .populate({
+        path: "orderItems",
+        populate: {
+          path: "productId",
+          populate: [
+            {
+              path: "productCategory",
+              select: "categoryName",
+            },
+            {
+              path: "seller",
+              select: "username email",
+            },
+          ],
+        },
+      });
+
+    if (orders.length === 0) {
+      return res
+        .status(200)
+        .json({
+          orders: [],
+          message: "No orders found",
+          currentPage: page,
+          totalPages: 0,
+          totalCategories: 0,
+        });
+    }
+
+    let totalOrders = await orderModel.countDocuments();
+    let totalPages = Math.ceil(totalOrders / limit);
+
+    res.status(200).json({
+      orders: orders,
+      currentPage: page,
+      totalPages,
+      totalOrders,
+    });
+  } catch (error: any) {
+    return res.status(500).json({
+      message: error.message || "Oops!! something went wrong. Try Again.",
+    });
+  }
+}
+
 // update order and payment status
 async function updateOrderStatus(req: Request, res: Response) {
   try {
@@ -342,4 +407,4 @@ async function getStats(req: Request, res: Response) {
   }
 }
 
-export { placeOrderFromCart, getMyOrders, getSellerOrders, updateOrderStatus, deleteOrder, getStats };
+export { placeOrderFromCart, getMyOrders, getSellerOrders, getAllOrders, updateOrderStatus, deleteOrder, getStats };
