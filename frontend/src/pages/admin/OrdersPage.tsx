@@ -147,6 +147,17 @@ export function OrdersPage() {
         };
     }, [limit, currentPage]);
 
+    let filteredOrders: Order[] = [];
+
+    if (orders !== undefined) {
+        filteredOrders = orders.filter((order) => {
+            const matchesSearch =
+                order.userId.username.toLowerCase().includes(searchTerm.toLowerCase()) || order.userId.email.toLowerCase().includes(searchTerm.toLowerCase());
+
+            return matchesSearch
+        })
+    }
+
     const handleViewOrder = (order: Order) => {
         setSelectedOrder(order)
         setIsViewDialogOpen(true)
@@ -362,7 +373,7 @@ export function OrdersPage() {
                                                 </TableCell>
                                             </TableRow>
                                         ) : (
-                                            orders.map((order, index) => (
+                                            filteredOrders.map((order, index) => (
                                                 <TableRow key={index}>
                                                     <TableCell className="font-medium">{order._id}</TableCell>
                                                     <TableCell>
